@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Army Vehicle Maintenance Tracker</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.75rem;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Styling */
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            font-size: 2rem;
+            color: #003366;
+            border-bottom: 3px solid #f0f2f5;
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .section h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-top: 2rem;
+        }
+        
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #e1e4e8;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f7fa;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fbfcfe;
+        }
+        
+        .status-fmc {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-nmc {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Button Styling */
+        .button {
+            background-color: #464feb;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .button:hover {
+            background-color: #3a3fcf;
+        }
+        
+        .button-edit {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .button-edit:hover {
+            background-color: #e0a800;
+        }
+        
+        .button-delete {
+            background-color: #dc3545;
+        }
+        .button-delete:hover {
+            background-color: #c82333;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close-button {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav {
+                margin-top: 1rem;
+            }
+            nav a {
+                display: block;
+                margin: 5px 0;
+            }
+            .container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Army Maintenance Tracker</h1>
+        <nav>
+            <a href="#tracker">Tracker</a>
+            <a href="#overview">Overview</a>
+            <a href="#operations">Operations</a>
+            <a href="#mos">MOS Structure</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- Maintenance Tracker Section -->
+        <section id="tracker" class="section">
+            <h2>Vehicle Readiness Tracker</h2>
+            <button class="button" id="addVehicleBtn">Add New Vehicle</button>
+            <div class="table-container">
+                <table id="vehicleTable">
+                    <thead>
+                        <tr>
+                            <th>Vehicle ID</th>
+                            <th>Status</th>
+                            <th>Current Faults</th>
+                            <th>Service Due</th>
+                            <th>Operator</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Vehicle data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Informational Sections -->
+        <section id="overview" class="section">
+            <h2>1. What Army Maintenance Is</h2>
+            <p>Army maintenance is a <strong>commander’s program</strong> focused on keeping all equipment <strong>Fully Mission Capable (FMC)</strong> using:</p>
+            <ul>
+                <li>Preventive Maintenance Checks and Services (PMCS)</li>
+                <li>Scheduled services</li>
+                <li>Repairs and troubleshooting</li>
+                <li>Parts ordering and tracking</li>
+                <li>Reporting through GCSS-Army</li>
+                <li>AOAP, dispatching, licensing, safety, and records management</li>
+            </ul>
+            <p>The goal is maximizing readiness, preventing failures, and ensuring equipment is available to execute the mission.</p>
+        </section>
+
+        <section id="operations" class="section">
+            <h2>2. Day-to-Day Operations</h2>
+            <h3>Motor Pool Monday Battle Rhythm</h3>
+            <ul>
+                <li><strong>0630–0700:</strong> Formation, safety brief, work assignments</li>
+                <li><strong>0700–0900:</strong> Operators conduct PMCS on all assigned equipment</li>
+                <li><strong>0900–1000:</strong> Mechanics verify faults, apply diagnostics, and update GCSS‑Army</li>
+                <li><strong>1000–1200:</strong> Submit parts requests (ZPARK), order lubes, initiate work orders</li>
+                <li><strong>1300–1600:</strong> Corrective maintenance, services, backlog repair, recovery ops</li>
+                <li><strong>End of Day:</strong> Update trackers, report status to maintenance control and commander</li>
+            </ul>
+
+            <h3>Services and Preventive Maintenance</h3>
+            <p>Operators use the -10 series TM to check fluids, inspect safety items, identify issues, and record faults on DA 5988‑E. Scheduled services are conducted by 91-series mechanics at set intervals.</p>
+            
+            <h3>Common Motor Pool Trackers</h3>
+            <ul>
+                <li><strong>Service Tracker:</strong> Lists all equipment, service due dates, and status.</li>
+                <li><strong>NMC Tracker / Deadline Report:</strong> Shows all down equipment and reason codes.</li>
+                <li><strong>Parts Tracker:</strong> Everything on order, status, and document numbers.</li>
+                <li><strong>AOAP Tracker:</strong> Samples due, submitted, and overdue.</li>
+                <li><strong>Dispatch Log:</strong> All vehicles out for mission.</li>
+                <li><strong>Work Order Tracker:</strong> DS/GS-level support status.</li>
+            </ul>
+
+            <h3>Parts Tracking & AOAP</h3>
+            <p>The <strong>PLL (92A or 92Y)</strong> manages parts from identification and request through GCSS-A to installation. The <strong>Army Oil Analysis Program (AOAP)</strong> prevents catastrophic failure through routine oil sampling and analysis, reducing unplanned failures and costs.</p>
+        </section>
+
+        <section id="mos" class="section">
+            <h2>3. MOS Breakdown – Motor Pool Organizational Structure</h2>
+            
+            <h3>91 Series (Primary Mechanics – The Backbone)</h3>
+            <ul>
+                <li><strong>91B – Wheeled Vehicle Mechanic:</strong> Repairs HMMWVs, LMTVs, JLTVs, etc.</li>
+                <li><strong>91H – Track Vehicle Repairer:</strong> Repairs tracked vehicles like Bradleys.</li>
+                <li><strong>91D – Power Generation Equipment Repairer:</strong> Repairs generators, A/C units.</li>
+                <li><strong>91E – Allied Trades Specialist:</strong> Fabricates and welds parts.</li>
+                <li><strong>91L – Construction Equipment Repairer:</strong> Repairs engineer equipment.</li>
+            </ul>
+
+            <h3>92 Series (Supply & PLL)</h3>
+            <ul>
+                <li><strong>92A – Automated Logistical Specialist:</strong> Runs PLL, orders parts, manages stock.</li>
+                <li><strong>92Y – Unit Supply:</strong> Manages TMDE, dispatch books, tool rooms.</li>
+            </ul>
+
+            <h3>88 Series (Transportation Support)</h3>
+            <ul>
+                <li><strong>88M – Motor Transport Operator:</strong> Drivers who perform PMCS and report faults.</li>
+            </ul>
+            
+            <h3>Leadership & Command Roles</h3>
+            <ul>
+                <li><strong>Motor Sergeant / Maint. Control NCOIC:</strong> Oversees all maintenance ops.</li>
+                <li><strong>Commander / XO / 1SG:</strong> Responsible for overall readiness, resources, and personnel.</li>
+            </ul>
+        </section>
+    </main>
+
+    <!-- Modal for adding/editing vehicles -->
+    <div id="vehicleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add Vehicle</h2>
+                <span class="close-button">&times;</span>
+            </div>
+            <form id="vehicleForm">
+                <input type="hidden" id="vehicleId">
+                <div class="form-group">
+                    <label for="vehicleAdminId">Vehicle Admin Number</label>
+                    <input type="text" id="vehicleAdminId" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleStatus">Status</label>
+                    <select id="vehicleStatus">
+                        <option value="FMC">FMC (Fully Mission Capable)</option>
+                        <option value="NMC">NMC (Non-Mission Capable)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleFaults">Current Faults</label>
+                    <textarea id="vehicleFaults" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleServiceDue">Service Due Date</label>
+                    <input type="date" id="vehicleServiceDue" required>
+                </div>
+                <div class="form-group">
+                    <label for="vehicleOperator">Assigned Operator</label>
+                    <input type="text" id="vehicleOperator">
+                </div>
+                <button type="submit" class="button">Save Vehicle</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Elements ---
+        const addVehicleBtn = document.getElementById('addVehicleBtn');
+        const modal = document.getElementById('vehicleModal');
+        const closeModalBtn = document.querySelector('.close-button');
+        const vehicleForm = document.getElementById('vehicleForm');
+        const vehicleTableBody = document.querySelector('#vehicleTable tbody');
+        const modalTitle = document.getElementById('modalTitle');
+
+        // --- Data Store (using localStorage for persistence) ---
+        let vehicles = JSON.parse(localStorage.getItem('vehicles')) || [
+            { id: 1, adminId: 'USA-75391', status: 'FMC', faults: 'None', serviceDue: '2026-04-15', operator: 'SGT Miller' },
+            { id: 2, adminId: 'USA-88124', status: 'NMC', faults: 'Class III leak from transmission.', serviceDue: '2026-03-20', operator: 'SPC Davis' },
+            { id: 3, adminId: 'USA-62547', status: 'FMC', faults: 'Radio mount loose.', serviceDue: '2026-05-01', operator: 'PFC Smith' }
+        ];
+
+        // --- Functions ---
+        const saveVehicles = () => {
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+        };
+
+        const renderTable = () => {
+            vehicleTableBody.innerHTML = '';
+            vehicles.forEach(vehicle => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${vehicle.adminId}</td>
+                    <td class="status-${vehicle.status.toLowerCase()}">${vehicle.status}</td>
+                    <td>${vehicle.faults}</td>
+                    <td>${vehicle.serviceDue}</td>
+                    <td>${vehicle.operator}</td>
+                    <td>
+                        <button class="button button-edit" data-id="${vehicle.id}">Edit</button>
+                        <button class="button button-delete" data-id="${vehicle.id}">Delete</button>
+                    </td>
+                `;
+                vehicleTableBody.appendChild(tr);
+            });
+        };
+
+        const openModal = (vehicle = null) => {
+            vehicleForm.reset();
+            if (vehicle) {
+                modalTitle.textContent = 'Edit Vehicle';
+                document.getElementById('vehicleId').value = vehicle.id;
+                document.getElementById('vehicleAdminId').value = vehicle.adminId;
+                document.getElementById('vehicleStatus').value = vehicle.status;
+                document.getElementById('vehicleFaults').value = vehicle.faults;
+                document.getElementById('vehicleServiceDue').value = vehicle.serviceDue;
+                document.getElementById('vehicleOperator').value = vehicle.operator;
+            } else {
+                modalTitle.textContent = 'Add New Vehicle';
+                document.getElementById('vehicleId').value = '';
+            }
+            modal.style.display = 'block';
+        };
+
+        const closeModal = () => {
+            modal.style.display = 'none';
+        };
+
+        const handleFormSubmit = (e) => {
+            e.preventDefault();
+            const id = document.getElementById('vehicleId').value;
+            const vehicleData = {
+                adminId: document.getElementById('vehicleAdminId').value,
+                status: document.getElementById('vehicleStatus').value,
+                faults: document.getElementById('vehicleFaults').value,
+                serviceDue: document.getElementById('vehicleServiceDue').value,
+                operator: document.getElementById('vehicleOperator').value,
+            };
+
+            if (id) { // Editing existing vehicle
+                const index = vehicles.findIndex(v => v.id == id);
+                vehicles[index] = { ...vehicles[index], ...vehicleData };
+            } else { // Adding new vehicle
+                vehicleData.id = vehicles.length > 0 ? Math.max(...vehicles.map(v => v.id)) + 1 : 1;
+                vehicles.push(vehicleData);
+            }
+            
+            saveVehicles();
+            renderTable();
+            closeModal();
+        };
+
+        const handleTableClick = (e) => {
+            const target = e.target;
+            const id = target.dataset.id;
+            
+            if (target.classList.contains('button-edit')) {
+                const vehicleToEdit = vehicles.find(v => v.id == id);
+                openModal(vehicleToEdit);
+            }
+            
+            if (target.classList.contains('button-delete')) {
+                if (confirm('Are you sure you want to delete this vehicle record?')) {
+                    vehicles = vehicles.filter(v => v.id != id);
+                    saveVehicles();
+                    renderTable();
+                }
+            }
+        };
+
+        // --- Event Listeners ---
+        addVehicleBtn.addEventListener('click', () => openModal());
+        closeModalBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => {
+            if (e.target == modal) closeModal();
+        });
+        vehicleForm.addEventListener('submit', handleFormSubmit);
+        vehicleTableBody.addEventListener('click', handleTableClick);
+
+        // --- Initial Render ---
+        renderTable();
+    });
+    </script>
+
+</body>
+</html>
