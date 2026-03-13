@@ -3,119 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Army Vehicle Maintenance Tracker</title>
+    <title>Commander's Maintenance Dashboard</title>
+    <!-- Chart.js Library for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* General Styling */
+        :root {
+            --bg-color: #eef2f6;
+            --primary-bg: #ffffff;
+            --header-bg: #1f3a5f;
+            --text-color: #333;
+            --primary-blue: #4a90e2;
+            --fmc-green: #28a745;
+            --nmc-red: #dc3545;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
-            background-color: #f0f2f5;
-            color: #1c1e21;
-            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
-        
         /* Header */
         header {
-            background-color: #003366;
+            background-color: var(--header-bg);
             color: white;
             padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         header h1 {
             margin: 0;
-            font-size: 1.75rem;
-        }
-
-        nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: opacity 0.3s;
-        }
-
-        nav a:hover {
-            opacity: 0.8;
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        /* Section Styling */
-        .section {
-            background-color: white;
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .section h2 {
             font-size: 2rem;
-            color: #003366;
-            border-bottom: 3px solid #f0f2f5;
-            padding-bottom: 0.5rem;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
         }
 
-        .section h3 {
-            font-size: 1.5rem;
-            color: #333;
-            margin-top: 2rem;
+        /* Main Dashboard Layout */
+        .dashboard-container {
+            padding: 2rem;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        /* Key Metrics Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background-color: var(--primary-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .metric-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
         }
         
-        /* Table Styling */
-        .table-container {
+        .metric-card .fmc-rate { color: var(--fmc-green); }
+        .metric-card .nmc-total { color: var(--nmc-red); }
+        .metric-card .avg-downtime { color: #f39c12; }
+
+        .metric-card .label {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* Chart Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            background-color: var(--primary-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .chart-card h3 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.25rem;
+        }
+
+        /* Tracker Table */
+        .tracker-section {
+            background-color: var(--primary-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
             overflow-x: auto;
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .tracker-header h2 {
+            margin: 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
+            font-size: 0.9rem;
         }
 
         th, td {
-            padding: 12px 15px;
-            border: 1px solid #e1e4e8;
+            padding: 12px;
             text-align: left;
+            border-bottom: 1px solid #e6e6e6;
         }
 
         th {
             background-color: #f5f7fa;
             font-weight: 600;
         }
-
-        tr:nth-child(even) {
-            background-color: #fbfcfe;
-        }
         
-        .status-fmc {
-            color: #28a745;
+        .status-nmc-tag {
+            background-color: var(--nmc-red);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
             font-weight: bold;
         }
 
-        .status-nmc {
-            color: #dc3545;
-            font-weight: bold;
-        }
-
-        /* Button Styling */
+        /* Button */
         .button {
-            background-color: #464feb;
+            background-color: var(--primary-blue);
             color: white;
             border: none;
             padding: 10px 15px;
@@ -123,375 +151,327 @@
             cursor: pointer;
             font-weight: 600;
             transition: background-color 0.3s;
-            text-decoration: none;
-            display: inline-block;
         }
+        .button:hover { background-color: #3a7ac8; }
 
-        .button:hover {
-            background-color: #3a3fcf;
-        }
-        
-        .button-edit {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        .button-edit:hover {
-            background-color: #e0a800;
-        }
-        
-        .button-delete {
-            background-color: #dc3545;
-        }
-        .button-delete:hover {
-            background-color: #c82333;
-        }
-
-        /* Modal Styling */
+        /* Modal */
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
+            display: none; position: fixed; z-index: 1001; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
         }
-
         .modal-content {
-            background-color: #fff;
-            margin: 10% auto;
-            padding: 2rem;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 500px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background-color: #fff; margin: 5% auto; padding: 2rem;
+            border-radius: 8px; width: 90%; max-width: 600px;
         }
-
         .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #dee2e6;
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #dee2e6; padding-bottom: 1rem; margin-bottom: 1rem;
         }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
+        .modal-header h2 { margin: 0; }
+        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
         }
-
-        .close-button {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
         .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
         }
-
-        /* Responsive Design */
+        
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            nav {
-                margin-top: 1rem;
-            }
-            nav a {
-                display: block;
-                margin: 5px 0;
-            }
-            .container {
-                padding: 0 1rem;
-            }
+            .dashboard-container { padding: 1rem; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Army Maintenance Tracker</h1>
-        <nav>
-            <a href="#tracker">Tracker</a>
-            <a href="#overview">Overview</a>
-            <a href="#operations">Operations</a>
-            <a href="#mos">MOS Structure</a>
-        </nav>
+        <h1>Commander's Maintenance Dashboard</h1>
     </header>
 
-    <main class="container">
-        <!-- Maintenance Tracker Section -->
-        <section id="tracker" class="section">
-            <h2>Vehicle Readiness Tracker</h2>
-            <button class="button" id="addVehicleBtn">Add New Vehicle</button>
-            <div class="table-container">
-                <table id="vehicleTable">
-                    <thead>
-                        <tr>
-                            <th>Vehicle ID</th>
-                            <th>Status</th>
-                            <th>Current Faults</th>
-                            <th>Service Due</th>
-                            <th>Operator</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Vehicle data will be dynamically inserted here -->
-                    </tbody>
-                </table>
+    <main class="dashboard-container">
+        <!-- Key Metrics Section -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <p id="fmcRate" class="value fmc-rate">0%</p>
+                <p class="label">FMC Rate</p>
+            </div>
+            <div class="metric-card">
+                <p id="nmcTotal" class="value nmc-total">0</p>
+                <p class="label">Total NMC Vehicles</p>
+            </div>
+            <div class="metric-card">
+                <p id="avgDowntime" class="value avg-downtime">0</p>
+                <p class="label">Avg. Downtime (Days)</p>
             </div>
         </section>
-        
-        <!-- Informational Sections -->
-        <section id="overview" class="section">
-            <h2>1. What Army Maintenance Is</h2>
-            <p>Army maintenance is a <strong>commander’s program</strong> focused on keeping all equipment <strong>Fully Mission Capable (FMC)</strong> using:</p>
-            <ul>
-                <li>Preventive Maintenance Checks and Services (PMCS)</li>
-                <li>Scheduled services</li>
-                <li>Repairs and troubleshooting</li>
-                <li>Parts ordering and tracking</li>
-                <li>Reporting through GCSS-Army</li>
-                <li>AOAP, dispatching, licensing, safety, and records management</li>
-            </ul>
-            <p>The goal is maximizing readiness, preventing failures, and ensuring equipment is available to execute the mission.</p>
+
+        <!-- Charts Section -->
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3>Vehicle Readiness</h3>
+                <canvas id="readinessChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>NMC Vehicle Downtime (Days)</h3>
+                <canvas id="downtimeChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Parts Status</h3>
+                <canvas id="partsChart"></canvas>
+            </div>
         </section>
 
-        <section id="operations" class="section">
-            <h2>2. Day-to-Day Operations</h2>
-            <h3>Motor Pool Monday Battle Rhythm</h3>
-            <ul>
-                <li><strong>0630–0700:</strong> Formation, safety brief, work assignments</li>
-                <li><strong>0700–0900:</strong> Operators conduct PMCS on all assigned equipment</li>
-                <li><strong>0900–1000:</strong> Mechanics verify faults, apply diagnostics, and update GCSS‑Army</li>
-                <li><strong>1000–1200:</strong> Submit parts requests (ZPARK), order lubes, initiate work orders</li>
-                <li><strong>1300–1600:</strong> Corrective maintenance, services, backlog repair, recovery ops</li>
-                <li><strong>End of Day:</strong> Update trackers, report status to maintenance control and commander</li>
-            </ul>
-
-            <h3>Services and Preventive Maintenance</h3>
-            <p>Operators use the -10 series TM to check fluids, inspect safety items, identify issues, and record faults on DA 5988‑E. Scheduled services are conducted by 91-series mechanics at set intervals.</p>
-            
-            <h3>Common Motor Pool Trackers</h3>
-            <ul>
-                <li><strong>Service Tracker:</strong> Lists all equipment, service due dates, and status.</li>
-                <li><strong>NMC Tracker / Deadline Report:</strong> Shows all down equipment and reason codes.</li>
-                <li><strong>Parts Tracker:</strong> Everything on order, status, and document numbers.</li>
-                <li><strong>AOAP Tracker:</strong> Samples due, submitted, and overdue.</li>
-                <li><strong>Dispatch Log:</strong> All vehicles out for mission.</li>
-                <li><strong>Work Order Tracker:</strong> DS/GS-level support status.</li>
-            </ul>
-
-            <h3>Parts Tracking & AOAP</h3>
-            <p>The <strong>PLL (92A or 92Y)</strong> manages parts from identification and request through GCSS-A to installation. The <strong>Army Oil Analysis Program (AOAP)</strong> prevents catastrophic failure through routine oil sampling and analysis, reducing unplanned failures and costs.</p>
-        </section>
-
-        <section id="mos" class="section">
-            <h2>3. MOS Breakdown – Motor Pool Organizational Structure</h2>
-            
-            <h3>91 Series (Primary Mechanics – The Backbone)</h3>
-            <ul>
-                <li><strong>91B – Wheeled Vehicle Mechanic:</strong> Repairs HMMWVs, LMTVs, JLTVs, etc.</li>
-                <li><strong>91H – Track Vehicle Repairer:</strong> Repairs tracked vehicles like Bradleys.</li>
-                <li><strong>91D – Power Generation Equipment Repairer:</strong> Repairs generators, A/C units.</li>
-                <li><strong>91E – Allied Trades Specialist:</strong> Fabricates and welds parts.</li>
-                <li><strong>91L – Construction Equipment Repairer:</strong> Repairs engineer equipment.</li>
-            </ul>
-
-            <h3>92 Series (Supply & PLL)</h3>
-            <ul>
-                <li><strong>92A – Automated Logistical Specialist:</strong> Runs PLL, orders parts, manages stock.</li>
-                <li><strong>92Y – Unit Supply:</strong> Manages TMDE, dispatch books, tool rooms.</li>
-            </ul>
-
-            <h3>88 Series (Transportation Support)</h3>
-            <ul>
-                <li><strong>88M – Motor Transport Operator:</strong> Drivers who perform PMCS and report faults.</li>
-            </ul>
-            
-            <h3>Leadership & Command Roles</h3>
-            <ul>
-                <li><strong>Motor Sergeant / Maint. Control NCOIC:</strong> Oversees all maintenance ops.</li>
-                <li><strong>Commander / XO / 1SG:</strong> Responsible for overall readiness, resources, and personnel.</li>
-            </ul>
+        <!-- Live Tracker Section -->
+        <section class="tracker-section">
+            <div class="tracker-header">
+                <h2>Live Bay & Personnel Tracker</h2>
+                <button class="button" id="addAssignmentBtn">Add New Assignment</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bay</th>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>MOS</th>
+                        <th>Platoon</th>
+                        <th>Vehicle</th>
+                        <th>Problem</th>
+                        <th>Downtime (Days)</th>
+                    </tr>
+                </thead>
+                <tbody id="trackerTableBody">
+                    <!-- Data will be populated by JavaScript -->
+                </tbody>
+            </table>
         </section>
     </main>
 
-    <!-- Modal for adding/editing vehicles -->
-    <div id="vehicleModal" class="modal">
+    <!-- Modal for adding assignments -->
+    <div id="assignmentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Add Vehicle</h2>
+                <h2>Add New Assignment</h2>
                 <span class="close-button">&times;</span>
             </div>
-            <form id="vehicleForm">
-                <input type="hidden" id="vehicleId">
-                <div class="form-group">
-                    <label for="vehicleAdminId">Vehicle Admin Number</label>
-                    <input type="text" id="vehicleAdminId" required>
+            <form id="assignmentForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Rank</label>
+                        <input type="text" id="rank" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>MOS</label>
+                        <input type="text" id="mos" placeholder="e.g., 91B" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Platoon</label>
+                        <input type="text" id="platoon" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Bay</label>
+                        <input type="text" id="bay" placeholder="e.g., Bay 1" required>
+                    </div>
+                     <div class="form-group">
+                        <label>Vehicle ID</label>
+                        <input type="text" id="vehicle" placeholder="e.g., USA-12345" required>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="vehicleStatus">Status</label>
-                    <select id="vehicleStatus">
-                        <option value="FMC">FMC (Fully Mission Capable)</option>
-                        <option value="NMC">NMC (Non-Mission Capable)</option>
-                    </select>
+                    <label>Problem / Fault</label>
+                    <textarea id="problem" rows="3" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="vehicleFaults">Current Faults</label>
-                    <textarea id="vehicleFaults" rows="3"></textarea>
+                    <label>Date Vehicle Went Down</label>
+                    <input type="date" id="dateDown" required>
                 </div>
-                <div class="form-group">
-                    <label for="vehicleServiceDue">Service Due Date</label>
-                    <input type="date" id="vehicleServiceDue" required>
-                </div>
-                <div class="form-group">
-                    <label for="vehicleOperator">Assigned Operator</label>
-                    <input type="text" id="vehicleOperator">
-                </div>
-                <button type="submit" class="button">Save Vehicle</button>
+                <button type="submit" class="button">Save Assignment</button>
             </form>
         </div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- DOM Elements ---
-        const addVehicleBtn = document.getElementById('addVehicleBtn');
-        const modal = document.getElementById('vehicleModal');
-        const closeModalBtn = document.querySelector('.close-button');
-        const vehicleForm = document.getElementById('vehicleForm');
-        const vehicleTableBody = document.querySelector('#vehicleTable tbody');
-        const modalTitle = document.getElementById('modalTitle');
 
-        // --- Data Store (using localStorage for persistence) ---
-        let vehicles = JSON.parse(localStorage.getItem('vehicles')) || [
-            { id: 1, adminId: 'USA-75391', status: 'FMC', faults: 'None', serviceDue: '2026-04-15', operator: 'SGT Miller' },
-            { id: 2, adminId: 'USA-88124', status: 'NMC', faults: 'Class III leak from transmission.', serviceDue: '2026-03-20', operator: 'SPC Davis' },
-            { id: 3, adminId: 'USA-62547', status: 'FMC', faults: 'Radio mount loose.', serviceDue: '2026-05-01', operator: 'PFC Smith' }
+        // --- SAMPLE DATA ---
+        // In a real application, this data would come from a database.
+        let partsData = [
+            { status: 'On Order', count: 12 },
+            { status: 'Shipped', count: 5 },
+            { status: 'In Shop', count: 8 },
         ];
 
+        let assignments = JSON.parse(localStorage.getItem('assignments')) || [
+            { id: 1, rank: 'SGT', name: 'Miller', mos: '91B', platoon: 'Alpha', bay: 'Bay 1', vehicle: 'USA-88124', problem: 'Transmission Fault', dateDown: '2026-03-01' },
+            { id: 2, rank: 'SPC', name: 'Davis', mos: '91B', platoon: 'Alpha', bay: 'Bay 2', vehicle: 'USA-75391', problem: 'Engine Overheating', dateDown: '2026-03-10' },
+            { id: 3, rank: 'SGT', name: 'Rodriguez', mos: '91E', platoon: 'Bravo', bay: 'Bay 3', vehicle: 'USA-62547', problem: 'Cracked Axle Mount', dateDown: '2026-02-25' },
+            { id: 4, rank: 'PFC', name: 'Wilson', mos: '91B', platoon: 'Charlie', bay: 'Bay 4', vehicle: 'USA-91108', problem: 'Hydraulic Leak', dateDown: '2026-03-12' },
+        ];
+        
+        const TOTAL_VEHICLES = 25; // Total number of vehicles in the company
+
+        // --- DOM Elements ---
+        const fmcRateEl = document.getElementById('fmcRate');
+        const nmcTotalEl = document.getElementById('nmcTotal');
+        const avgDowntimeEl = document.getElementById('avgDowntime');
+        const trackerTableBody = document.getElementById('trackerTableBody');
+        const modal = document.getElementById('assignmentModal');
+        const addAssignmentBtn = document.getElementById('addAssignmentBtn');
+        const closeModalBtn = document.querySelector('.close-button');
+        const assignmentForm = document.getElementById('assignmentForm');
+
+        // --- Chart Instances ---
+        let readinessChart, downtimeChart, partsChart;
+
         // --- Functions ---
-        const saveVehicles = () => {
-            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+        const saveAssignments = () => {
+            localStorage.setItem('assignments', JSON.stringify(assignments));
         };
 
-        const renderTable = () => {
-            vehicleTableBody.innerHTML = '';
-            vehicles.forEach(vehicle => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${vehicle.adminId}</td>
-                    <td class="status-${vehicle.status.toLowerCase()}">${vehicle.status}</td>
-                    <td>${vehicle.faults}</td>
-                    <td>${vehicle.serviceDue}</td>
-                    <td>${vehicle.operator}</td>
-                    <td>
-                        <button class="button button-edit" data-id="${vehicle.id}">Edit</button>
-                        <button class="button button-delete" data-id="${vehicle.id}">Delete</button>
-                    </td>
+        const calculateDowntime = (dateDown) => {
+            const downDate = new Date(dateDown);
+            const today = new Date();
+            const diffTime = Math.abs(today - downDate);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        };
+
+        const updateAll = () => {
+            updateMetrics();
+            populateTable();
+            renderCharts();
+        };
+
+        const updateMetrics = () => {
+            const nmcCount = assignments.length;
+            const fmcCount = TOTAL_VEHICLES - nmcCount;
+            const fmcRate = (fmcCount / TOTAL_VEHICLES) * 100;
+
+            fmcRateEl.textContent = `${fmcRate.toFixed(0)}%`;
+            nmcTotalEl.textContent = nmcCount;
+
+            if (nmcCount > 0) {
+                const totalDowntime = assignments.reduce((sum, a) => sum + calculateDowntime(a.dateDown), 0);
+                avgDowntimeEl.textContent = (totalDowntime / nmcCount).toFixed(1);
+            } else {
+                avgDowntimeEl.textContent = '0';
+            }
+        };
+
+        const populateTable = () => {
+            trackerTableBody.innerHTML = '';
+            assignments.forEach(a => {
+                const downtime = calculateDowntime(a.dateDown);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${a.bay}</td>
+                    <td>${a.rank}</td>
+                    <td>${a.name}</td>
+                    <td>${a.mos}</td>
+                    <td>${a.platoon}</td>
+                    <td><span class="status-nmc-tag">${a.vehicle}</span></td>
+                    <td>${a.problem}</td>
+                    <td>${downtime}</td>
                 `;
-                vehicleTableBody.appendChild(tr);
+                trackerTableBody.appendChild(row);
             });
         };
 
-        const openModal = (vehicle = null) => {
-            vehicleForm.reset();
-            if (vehicle) {
-                modalTitle.textContent = 'Edit Vehicle';
-                document.getElementById('vehicleId').value = vehicle.id;
-                document.getElementById('vehicleAdminId').value = vehicle.adminId;
-                document.getElementById('vehicleStatus').value = vehicle.status;
-                document.getElementById('vehicleFaults').value = vehicle.faults;
-                document.getElementById('vehicleServiceDue').value = vehicle.serviceDue;
-                document.getElementById('vehicleOperator').value = vehicle.operator;
-            } else {
-                modalTitle.textContent = 'Add New Vehicle';
-                document.getElementById('vehicleId').value = '';
-            }
-            modal.style.display = 'block';
-        };
+        const renderCharts = () => {
+            // Destroy existing charts to prevent duplicates
+            if (readinessChart) readinessChart.destroy();
+            if (downtimeChart) downtimeChart.destroy();
+            if (partsChart) partsChart.destroy();
 
-        const closeModal = () => {
-            modal.style.display = 'none';
+            // 1. Vehicle Readiness Chart (Pie)
+            const nmcCount = assignments.length;
+            const readinessCtx = document.getElementById('readinessChart').getContext('2d');
+            readinessChart = new Chart(readinessCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['FMC', 'NMC'],
+                    datasets: [{
+                        data: [TOTAL_VEHICLES - nmcCount, nmcCount],
+                        backgroundColor: ['#28a745', '#dc3545'],
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: true }
+            });
+
+            // 2. Downtime Chart (Bar)
+            const downtimeData = assignments.map(a => ({ vehicle: a.vehicle, days: calculateDowntime(a.dateDown) })).sort((a, b) => b.days - a.days);
+            const downtimeCtx = document.getElementById('downtimeChart').getContext('2d');
+            downtimeChart = new Chart(downtimeCtx, {
+                type: 'bar',
+                data: {
+                    labels: downtimeData.map(d => d.vehicle),
+                    datasets: [{
+                        label: 'Days Down',
+                        data: downtimeData.map(d => d.days),
+                        backgroundColor: '#dc3545',
+                    }]
+                },
+                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
+            });
+
+            // 3. Parts Status Chart (Doughnut)
+            const partsCtx = document.getElementById('partsChart').getContext('2d');
+            partsChart = new Chart(partsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: partsData.map(p => p.status),
+                    datasets: [{
+                        data: partsData.map(p => p.count),
+                        backgroundColor: ['#f39c12', '#4a90e2', '#3498db'],
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: true }
+            });
         };
 
         const handleFormSubmit = (e) => {
             e.preventDefault();
-            const id = document.getElementById('vehicleId').value;
-            const vehicleData = {
-                adminId: document.getElementById('vehicleAdminId').value,
-                status: document.getElementById('vehicleStatus').value,
-                faults: document.getElementById('vehicleFaults').value,
-                serviceDue: document.getElementById('vehicleServiceDue').value,
-                operator: document.getElementById('vehicleOperator').value,
+            const newAssignment = {
+                id: Date.now(),
+                rank: document.getElementById('rank').value,
+                name: document.getElementById('name').value,
+                mos: document.getElementById('mos').value,
+                platoon: document.getElementById('platoon').value,
+                bay: document.getElementById('bay').value,
+                vehicle: document.getElementById('vehicle').value,
+                problem: document.getElementById('problem').value,
+                dateDown: document.getElementById('dateDown').value,
             };
-
-            if (id) { // Editing existing vehicle
-                const index = vehicles.findIndex(v => v.id == id);
-                vehicles[index] = { ...vehicles[index], ...vehicleData };
-            } else { // Adding new vehicle
-                vehicleData.id = vehicles.length > 0 ? Math.max(...vehicles.map(v => v.id)) + 1 : 1;
-                vehicles.push(vehicleData);
-            }
-            
-            saveVehicles();
-            renderTable();
+            assignments.push(newAssignment);
+            saveAssignments();
+            updateAll();
             closeModal();
         };
 
-        const handleTableClick = (e) => {
-            const target = e.target;
-            const id = target.dataset.id;
-            
-            if (target.classList.contains('button-edit')) {
-                const vehicleToEdit = vehicles.find(v => v.id == id);
-                openModal(vehicleToEdit);
-            }
-            
-            if (target.classList.contains('button-delete')) {
-                if (confirm('Are you sure you want to delete this vehicle record?')) {
-                    vehicles = vehicles.filter(v => v.id != id);
-                    saveVehicles();
-                    renderTable();
-                }
-            }
+        const openModal = () => {
+            assignmentForm.reset();
+            modal.style.display = 'block';
         };
+        const closeModal = () => { modal.style.display = 'none'; };
 
         // --- Event Listeners ---
-        addVehicleBtn.addEventListener('click', () => openModal());
+        addAssignmentBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
         window.addEventListener('click', (e) => {
             if (e.target == modal) closeModal();
         });
-        vehicleForm.addEventListener('submit', handleFormSubmit);
-        vehicleTableBody.addEventListener('click', handleTableClick);
+        assignmentForm.addEventListener('submit', handleFormSubmit);
 
-        // --- Initial Render ---
-        renderTable();
+        // --- Initial Load ---
+        updateAll();
     });
     </script>
-
 </body>
 </html>
