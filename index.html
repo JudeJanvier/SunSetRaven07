@@ -1,477 +1,672 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Commander's Maintenance Dashboard</title>
-    <!-- Chart.js Library for graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-color: #eef2f6;
-            --primary-bg: #ffffff;
-            --header-bg: #1f3a5f;
-            --text-color: #333;
-            --primary-blue: #4a90e2;
-            --fmc-green: #28a745;
-            --nmc-red: #dc3545;
-            --shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DPC Map | Deployment Processing Center</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
+    html {
+      scroll-behavior: smooth;
+    }
 
-        /* Header */
-        header {
-            background-color: var(--header-bg);
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef2f6;
+      color: #1d2a36;
+      line-height: 1.5;
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 2rem;
-        }
+    a {
+      text-decoration: none;
+    }
 
-        /* Main Dashboard Layout */
-        .dashboard-container {
-            padding: 2rem;
-            display: grid;
-            gap: 1.5rem;
-        }
+    header {
+      background:#2b4a6f; /* dark blue like screenshot */
+      color:white;
+      padding:16px 20px;
+      position:sticky;
+      top:0;
+      z-index:1100;
+    }
 
-        /* Key Metrics Cards */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
+    .header-wrap {
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
 
-        .metric-card {
-            background-color: var(--primary-bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
 
-        .metric-card .value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        
-        .metric-card .fmc-rate { color: var(--fmc-green); }
-        .metric-card .nmc-total { color: var(--nmc-red); }
-        .metric-card .avg-downtime { color: #f39c12; }
+    .logo-img{
+      width:42px;
+      height:42px;
+      object-fit:contain;
+      border-radius:50%;
+      background:rgba(255,255,255,0.08);
+      padding:6px;
+    }
 
-        .metric-card .label {
-            font-size: 1rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
+    .brand-text h1{
+      margin:0;
+      font-size:20px;
+      font-weight:600;
+    }
 
-        /* Chart Grid */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
+    .brand-text p{
+      margin:2px 0 0;
+      font-size:13px;
+      opacity:0.9;
+    }
 
-        .chart-card {
-            background-color: var(--primary-bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-        }
+    .menu{
+      background:#4f6883; /* gray-blue nav bar like screenshot */
+      position:sticky;
+      top:74px;
+      z-index:1000;
+    }
 
-        .chart-card h3 {
-            margin-top: 0;
-            text-align: center;
-            font-size: 1.25rem;
-        }
+    .menu-wrap{
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      gap:30px;
+      padding:12px 20px;
+      align-items:center;
+    }
 
-        /* Tracker Table */
-        .tracker-section {
-            background-color: var(--primary-bg);
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            overflow-x: auto;
-        }
+    .menu-right{
+      margin-left:auto; /* push to right */
+      display:flex;
+      gap:30px;
+      align-items:center;
+    }
 
-        .tracker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-        
-        .tracker-header h2 {
-            margin: 0;
-        }
+    .menu a{
+      color:white;
+      font-size:14px;
+      padding:8px 4px;
+      border-radius:4px;
+      background:none;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
+    .menu a:hover{
+      background:rgba(255,255,255,0.15);
+    }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e6e6e6;
-        }
+    /* DROPDOWN MENU */
 
-        th {
-            background-color: #f5f7fa;
-            font-weight: 600;
-        }
-        
-        .status-nmc-tag {
-            background-color: var(--nmc-red);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
+    .dropdown{
+      position:relative;
+      display:inline-block;
+    }
 
-        /* Button */
-        .button {
-            background-color: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-        .button:hover { background-color: #3a7ac8; }
+    .dropdown-content{
+      display:none;
+      position:absolute;
+      background:white;
+      min-width:160px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+      border-radius:8px;
+      overflow:hidden;
+      z-index:1000;
+    }
 
-        /* Modal */
-        .modal {
-            display: none; position: fixed; z-index: 1001; left: 0; top: 0;
-            width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: #fff; margin: 5% auto; padding: 2rem;
-            border-radius: 8px; width: 90%; max-width: 600px;
-        }
-        .modal-header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #dee2e6; padding-bottom: 1rem; margin-bottom: 1rem;
-        }
-        .modal-header h2 { margin: 0; }
-        .close-button { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
-        }
-        
-        @media (max-width: 768px) {
-            .dashboard-container { padding: 1rem; }
-            .form-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    .dropdown-content a{
+      display:block;
+      background:white;
+      color:#1f3a5f;
+      padding:10px 14px;
+      border-radius:0;
+    }
+
+    .dropdown-content a:hover{
+      background:#eef2f6;
+    }
+
+    .dropdown:hover .dropdown-content{
+      display:block;
+    }
+      background: #2d527f;
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      background: linear-gradient(rgba(20, 38, 63, 0.8), rgba(20, 38, 63, 0.75)),
+        url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1600&q=80') center/cover;
+      color: white;
+      padding: 70px 20px;
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .hero h2 {
+      margin: 0 0 12px;
+      font-size: 40px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 720px;
+      font-size: 17px;
+      opacity: 0.95;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    .section-title {
+      margin: 0 0 18px;
+      font-size: 30px;
+      color: #1f3a5f;
+    }
+
+    .section-subtitle {
+      margin: 0 0 28px;
+      color: #556575;
+      font-size: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: start; /* prevent stretching issue */
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+      border: 1px solid #e6edf5;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 14px;
+      color: #1f3a5f;
+      font-size: 22px;
+      text-align:center; /* center the title */
+    }
+
+    .map-embed {
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid #d8e1ea;
+      background: #f7fafc;
+    }
+
+    .map-embed iframe {
+      width: 100%;
+      height: 500px;
+      border: 0;
+      display: block;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    
+
+    .info-list::-webkit-scrollbar-thumb{
+      background:#c5d2df;
+      border-radius:4px;
+    }
+
+    .info-list::-webkit-scrollbar-thumb:hover{
+      background:#9fb3c7;
+    }
+
+    
+      display: grid;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .info-item {
+      background: #f8fbff;
+      border: 1px solid #dbe7f3;
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .info-item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #1f3a5f;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-weight: bold;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #1f3a5f;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #294d79;
+    }
+
+    .btn-secondary {
+      background: #e8f0f8;
+      color: #1f3a5f;
+      border: 1px solid #cfdceb;
+    }
+
+    .btn-secondary:hover {
+      background: #dfeaf5;
+    }
+
+    .tips{display:none;} /* replaced by contact bar */
+
+/* EMERGENCY CONTACT BAR */
+.contact-bar{
+  background:#2b4a6f;
+  color:white;
+  margin-top:30px;
+}
+.contact-wrap{
+  max-width:1200px;
+  margin:0 auto;
+  padding:22px 20px 26px;
+}
+.contact-title{
+  text-align:center;
+  font-weight:600;
+  margin-bottom:18px;
+  font-size:18px;
+}
+.contact-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  text-align:center;
+}
+.contact-item strong{
+  display:block;
+  margin-bottom:6px;
+  font-size:15px;
+}
+.contact-item{
+  font-size:14px;
+  line-height:1.5;
+}
+@media(max-width:700px){
+  .contact-grid{grid-template-columns:1fr;gap:14px;}
+}
+
+    .tip-box {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+      border: 1px solid #e6edf5;
+    }
+
+    .tip-box h4 {
+      margin: 0 0 10px;
+      color: #1f3a5f;
+      font-size: 18px;
+    }
+
+    /* GENERAL ORDER POLICY BOX (matches screenshot colors) */
+
+    .go-policy{
+      max-width:1200px;
+      margin:30px auto 10px auto;
+      padding:0 20px;
+    }
+
+    .go-box{
+      background:#e6d8b5; /* beige background like screenshot */
+      border-left:8px solid #d6a100; /* yellow side bar */
+      border-radius:10px;
+      padding:25px 30px;
+      text-align:center;
+      box-shadow:0 6px 14px rgba(0,0,0,0.12);
+    }
+
+    .go-box h3{
+      margin-top:0;
+      font-size:20px;
+      color:#000;
+      font-weight:bold;
+    }
+
+    .go-box p{
+      margin:12px 0;
+      font-size:15px;
+    }
+
+    .go-box ul{
+      margin-top:12px;
+      list-style:disc;
+      display:inline-block;
+      text-align:left;
+      padding-left:20px;
+    }
+
+    footer {
+      background: #1f3a5f;
+      color: white;
+      text-align: center;
+      padding: 22px 16px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .grid,
+      .tips {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h2 {
+        font-size: 32px;
+      }
+
+      .menu {
+        top: 116px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 14px 16px;
+      }
+
+      .header-wrap {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .brand {
+        flex-direction: column;
+      }
+
+      .brand-text h1 {
+        font-size: 22px;
+      }
+
+      .menu {
+        top: 144px;
+      }
+
+      .hero {
+        padding: 54px 18px;
+      }
+
+      .hero h2 {
+        font-size: 28px;
+      }
+
+      .map-embed iframe {
+        height: 360px;
+      }
+    }
+  
+
+/* MAP MODAL */
+.map-modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.85);
+  z-index:2000;
+  justify-content:center;
+  align-items:center;
+}
+
+.map-modal img{
+  max-width:90%;
+  max-height:90%;
+  border-radius:10px;
+}
+
+.close-btn{
+  position:absolute;
+  top:20px;
+  right:30px;
+  color:white;
+  font-size:32px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+</style>
 </head>
 <body>
-
-    <header>
-        <h1>Commander's Maintenance Dashboard</h1>
-    </header>
-
-    <main class="dashboard-container">
-        <!-- Key Metrics Section -->
-        <section class="metrics-grid">
-            <div class="metric-card">
-                <p id="fmcRate" class="value fmc-rate">0%</p>
-                <p class="label">FMC Rate</p>
-            </div>
-            <div class="metric-card">
-                <p id="nmcTotal" class="value nmc-total">0</p>
-                <p class="label">Total NMC Vehicles</p>
-            </div>
-            <div class="metric-card">
-                <p id="avgDowntime" class="value avg-downtime">0</p>
-                <p class="label">Avg. Downtime (Days)</p>
-            </div>
-        </section>
-
-        <!-- Charts Section -->
-        <section class="charts-grid">
-            <div class="chart-card">
-                <h3>Vehicle Readiness</h3>
-                <canvas id="readinessChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>NMC Vehicle Downtime (Days)</h3>
-                <canvas id="downtimeChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Parts Status</h3>
-                <canvas id="partsChart"></canvas>
-            </div>
-        </section>
-
-        <!-- Live Tracker Section -->
-        <section class="tracker-section">
-            <div class="tracker-header">
-                <h2>Live Bay & Personnel Tracker</h2>
-                <button class="button" id="addAssignmentBtn">Add New Assignment</button>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Bay</th>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>MOS</th>
-                        <th>Platoon</th>
-                        <th>Vehicle</th>
-                        <th>Problem</th>
-                        <th>Downtime (Days)</th>
-                    </tr>
-                </thead>
-                <tbody id="trackerTableBody">
-                    <!-- Data will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <!-- Modal for adding assignments -->
-    <div id="assignmentModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Add New Assignment</h2>
-                <span class="close-button">&times;</span>
-            </div>
-            <form id="assignmentForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Rank</label>
-                        <input type="text" id="rank" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Name</label>
-                        <input type="text" id="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>MOS</label>
-                        <input type="text" id="mos" placeholder="e.g., 91B" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Platoon</label>
-                        <input type="text" id="platoon" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Bay</label>
-                        <input type="text" id="bay" placeholder="e.g., Bay 1" required>
-                    </div>
-                     <div class="form-group">
-                        <label>Vehicle ID</label>
-                        <input type="text" id="vehicle" placeholder="e.g., USA-12345" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Problem / Fault</label>
-                    <textarea id="problem" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Date Vehicle Went Down</label>
-                    <input type="date" id="dateDown" required>
-                </div>
-                <button type="submit" class="button">Save Assignment</button>
-            </form>
+  <header>
+    <div class="header-wrap">
+      <div class="brand">
+        <img src="logo.png" alt="DPC Logo" class="logo-img">
+        <div class="brand-text">
+          <h1>Deployment Processing Center</h1>
+          <p>21st Theater Sustainment Command | DPC Map & Visitor Guidance</p>
         </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="menu">
+    <div class="menu-wrap">
+      <a href="index.html">Home</a>
+
+      <div class="dropdown">
+        <a href="#">Mayor Cell</a>
+        <div class="dropdown-content">
+          <a href="contact.html">Contact</a>
+          <a href="locations.html">Locations</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <a href="#">Services</a>
+        <div class="dropdown-content">
+          <a href="transportation.html">Transportation</a>
+          <a href="food.html">Food</a>
+        </div>
+      </div>
+
+      <a href="#arrival-tips">Arrival Tips</a>
+      <a href="#dpc-map">DPC Map</a>
+
+      <!-- RIGHT SIDE MENU -->
+      <div class="menu-right">
+        <a href="contact.html">Contact</a>
+        <a href="flight.html">Flight Status</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero" style="background:url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;position:relative;padding:50px 40px;color:white;">
+
+    <!-- dark overlay for readability -->
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(20,38,63,0.65);"></div>
+
+    <div class="hero-content" style="position:relative;z-index:2;max-width:900px;">
+
+      <h2 style="font-size:32px;margin:0 0 14px 0;font-weight:700;">
+        Welcome to the Deployment Processing Center
+      </h2>
+
+      <p style="font-size:18px;line-height:1.6;max-width:700px;">
+        This portal provides important arrival information, facility guidance, transportation resources, and support services for personnel assigned to the DPC.
+      </p>
+
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
+  </section>
 
-        // --- SAMPLE DATA ---
-        // In a real application, this data would come from a database.
-        let partsData = [
-            { status: 'On Order', count: 12 },
-            { status: 'Shipped', count: 5 },
-            { status: 'In Shop', count: 8 },
-        ];
+  <section class="go-policy">
+    <div class="go-box">
+      <h3>General Order #1 – Alcohol Policy</h3>
+      <p>
+        Alcohol is strictly prohibited for all personnel assigned to the DPC, regardless of branch of service.
+        Consumption is not allowed on or off the installation during your stay. Possession of alcohol is also prohibited.
+      </p>
 
-        let assignments = JSON.parse(localStorage.getItem('assignments')) || [
-            { id: 1, rank: 'SGT', name: 'Miller', mos: '91B', platoon: 'Alpha', bay: 'Bay 1', vehicle: 'USA-88124', problem: 'Transmission Fault', dateDown: '2026-03-01' },
-            { id: 2, rank: 'SPC', name: 'Davis', mos: '91B', platoon: 'Alpha', bay: 'Bay 2', vehicle: 'USA-75391', problem: 'Engine Overheating', dateDown: '2026-03-10' },
-            { id: 3, rank: 'SGT', name: 'Rodriguez', mos: '91E', platoon: 'Bravo', bay: 'Bay 3', vehicle: 'USA-62547', problem: 'Cracked Axle Mount', dateDown: '2026-02-25' },
-            { id: 4, rank: 'PFC', name: 'Wilson', mos: '91B', platoon: 'Charlie', bay: 'Bay 4', vehicle: 'USA-91108', problem: 'Hydraulic Leak', dateDown: '2026-03-12' },
-        ];
-        
-        const TOTAL_VEHICLES = 25; // Total number of vehicles in the company
+      <p><strong>General Order #1 signed by the Commanding General, 21st TSC</strong></p>
 
-        // --- DOM Elements ---
-        const fmcRateEl = document.getElementById('fmcRate');
-        const nmcTotalEl = document.getElementById('nmcTotal');
-        const avgDowntimeEl = document.getElementById('avgDowntime');
-        const trackerTableBody = document.getElementById('trackerTableBody');
-        const modal = document.getElementById('assignmentModal');
-        const addAssignmentBtn = document.getElementById('addAssignmentBtn');
-        const closeModalBtn = document.querySelector('.close-button');
-        const assignmentForm = document.getElementById('assignmentForm');
+      <p>
+        If DPC staff detect the smell of alcohol or witness alcohol consumption, they are required to notify:
+      </p>
 
-        // --- Chart Instances ---
-        let readinessChart, downtimeChart, partsChart;
+      <ul>
+        <li>Military Police</li>
+        <li>Your Chain of Command</li>
+      </ul>
+    </div>
+  </section>
 
-        // --- Functions ---
-        const saveAssignments = () => {
-            localStorage.setItem('assignments', JSON.stringify(assignments));
-        };
+  <main>
+    <section id="dpc-map">
+      
 
-        const calculateDowntime = (dateDown) => {
-            const downDate = new Date(dateDown);
-            const today = new Date();
-            const diffTime = Math.abs(today - downDate);
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        };
+      <div class="grid">
+        <div class="card">
+          <h3>DPC Area Map</h3>
+          <p style="text-align:center;margin-bottom:12px;color:#556575;">Tap the map to expand fullscreen.</p>
+          <div class="map-embed">
+            <img src="dpc-map.png" alt="DPC Area Map" style="width:100%;height:auto;display:block;cursor:pointer;" onclick="openMap()">
+          </div>
+        </div>
 
-        const updateAll = () => {
-            updateMetrics();
-            populateTable();
-            renderCharts();
-        };
+        <div class="card" id="location-details">
+          <h3>DPC Information</h3>
+          <div class="info-list">
 
-        const updateMetrics = () => {
-            const nmcCount = assignments.length;
-            const fmcCount = TOTAL_VEHICLES - nmcCount;
-            const fmcRate = (fmcCount / TOTAL_VEHICLES) * 100;
+            <div class="info-item">
+              <strong>1. Primary Check-In </strong>
+              <ul>
+                <li>Facility: DPC / Reception</li>
+                <li>Location: Building 235 </li>
+                <li>Report immediately upon arrival</li>
+                <li><strong>Bring copies of your orders</strong></li>
+                <li><strong>Bring your CAC</strong></li>
+              </ul>
+            </div>
 
-            fmcRateEl.textContent = `${fmcRate.toFixed(0)}%`;
-            nmcTotalEl.textContent = nmcCount;
+            <div class="info-item">
+              <strong>2. Billeting & Laundry</strong>
+              <ul>
+                <li>Billeting: Assigned by PHA (Male/Female separate)</li>
+                <li>Laundry: Building 268 (Washers / Dryers / Detergent are FREE)</li>
+                <li><strong>Laundry closed: 2100 – 0730</strong></li>
+              </ul>
+            </div>
 
-            if (nmcCount > 0) {
-                const totalDowntime = assignments.reduce((sum, a) => sum + calculateDowntime(a.dateDown), 0);
-                avgDowntimeEl.textContent = (totalDowntime / nmcCount).toFixed(1);
-            } else {
-                avgDowntimeEl.textContent = '0';
-            }
-        };
+            <div class="info-item">
+              <strong>3. Recreation & Connectivity (USO)</strong>
+              <ul>
+                <li>Facility: USO Center</li>
+                <li>Location: Building 235</li>
+                <li>Hours: Open 24/7</li>
+                <li>Services: TV, Ping Pong, Pool, snacks, and coffee</li>
+              </ul>
+            </div>
 
-        const populateTable = () => {
-            trackerTableBody.innerHTML = '';
-            assignments.forEach(a => {
-                const downtime = calculateDowntime(a.dateDown);
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${a.bay}</td>
-                    <td>${a.rank}</td>
-                    <td>${a.name}</td>
-                    <td>${a.mos}</td>
-                    <td>${a.platoon}</td>
-                    <td><span class="status-nmc-tag">${a.vehicle}</span></td>
-                    <td>${a.problem}</td>
-                    <td>${downtime}</td>
-                `;
-                trackerTableBody.appendChild(row);
-            });
-        };
+            
 
-        const renderCharts = () => {
-            // Destroy existing charts to prevent duplicates
-            if (readinessChart) readinessChart.destroy();
-            if (downtimeChart) downtimeChart.destroy();
-            if (partsChart) partsChart.destroy();
+          </div>
+        </div>
+      </div>
+        </div>
+    </section>
 
-            // 1. Vehicle Readiness Chart (Pie)
-            const nmcCount = assignments.length;
-            const readinessCtx = document.getElementById('readinessChart').getContext('2d');
-            readinessChart = new Chart(readinessCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['FMC', 'NMC'],
-                    datasets: [{
-                        data: [TOTAL_VEHICLES - nmcCount, nmcCount],
-                        backgroundColor: ['#28a745', '#dc3545'],
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: true }
-            });
+    <section class="contact-bar">
+  <div class="contact-wrap">
+    <div class="contact-title">Emergency & Contact Information</div>
 
-            // 2. Downtime Chart (Bar)
-            const downtimeData = assignments.map(a => ({ vehicle: a.vehicle, days: calculateDowntime(a.dateDown) })).sort((a, b) => b.days - a.days);
-            const downtimeCtx = document.getElementById('downtimeChart').getContext('2d');
-            downtimeChart = new Chart(downtimeCtx, {
-                type: 'bar',
-                data: {
-                    labels: downtimeData.map(d => d.vehicle),
-                    datasets: [{
-                        label: 'Days Down',
-                        data: downtimeData.map(d => d.days),
-                        backgroundColor: '#dc3545',
-                    }]
-                },
-                options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
-            });
+    <div class="contact-grid">
 
-            // 3. Parts Status Chart (Doughnut)
-            const partsCtx = document.getElementById('partsChart').getContext('2d');
-            partsChart = new Chart(partsCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: partsData.map(p => p.status),
-                    datasets: [{
-                        data: partsData.map(p => p.count),
-                        backgroundColor: ['#f39c12', '#4a90e2', '#3498db'],
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: true }
-            });
-        };
+      <div class="contact-item">
+        <strong>Emergency</strong>
+        DSN: 112<br>
+        Cell: +49-6371-47-112
+      </div>
 
-        const handleFormSubmit = (e) => {
-            e.preventDefault();
-            const newAssignment = {
-                id: Date.now(),
-                rank: document.getElementById('rank').value,
-                name: document.getElementById('name').value,
-                mos: document.getElementById('mos').value,
-                platoon: document.getElementById('platoon').value,
-                bay: document.getElementById('bay').value,
-                vehicle: document.getElementById('vehicle').value,
-                problem: document.getElementById('problem').value,
-                dateDown: document.getElementById('dateDown').value,
-            };
-            assignments.push(newAssignment);
-            saveAssignments();
-            updateAll();
-            closeModal();
-        };
+      <div class="contact-item">
+        <strong>DPC Director</strong>
+        Mr. Charles Wallace<br>
+        DSN: +49 611 143-528-3300
+      </div>
 
-        const openModal = () => {
-            assignmentForm.reset();
-            modal.style.display = 'block';
-        };
-        const closeModal = () => { modal.style.display = 'none'; };
+      <div class="contact-item">
+        <strong>PHA Chief</strong>
+        Mr. Thomas Smith<br>
+        DSN: +49 611 143-528-3304
+      </div>
 
-        // --- Event Listeners ---
-        addAssignmentBtn.addEventListener('click', openModal);
-        closeModalBtn.addEventListener('click', closeModal);
-        window.addEventListener('click', (e) => {
-            if (e.target == modal) closeModal();
-        });
-        assignmentForm.addEventListener('submit', handleFormSubmit);
+    </div>
+  </div>
+</section>
+  </main>
 
-        // --- Initial Load ---
-        updateAll();
-    });
-    </script>
+  <footer>
+    <p>&copy; 2026 Deployment Processing Center | Built for DPC information support</p>
+  </footer>
+
+
+<!-- MAP MODAL -->
+<div class="map-modal" id="mapModal">
+  <span class="close-btn" onclick="closeMap()">&times;</span>
+  <img src="dpc-map.png" alt="Full Map">
+</div>
+
+<script>
+function openMap(){
+  document.getElementById('mapModal').style.display='flex';
+}
+
+function closeMap(){
+  document.getElementById('mapModal').style.display='none';
+}
+
+// close when clicking outside image
+window.onclick = function(e){
+  const modal = document.getElementById('mapModal');
+  if(e.target === modal){
+    modal.style.display='none';
+  }
+}
+</script>
+
 </body>
 </html>
