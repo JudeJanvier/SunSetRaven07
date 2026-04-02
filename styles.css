@@ -490,6 +490,59 @@ footer {
   }
 }
 
+/* =========================
+   MOBILE ONLY (PHONE)
+========================= */
+@media (max-width: 768px) {
+
+  /* SHOW CANDY ICON */
+  .menu-toggle {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+  }
+
+  .menu-toggle span {
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 2px;
+  }
+
+  /* HIDE MENU BY DEFAULT */
+  .menu-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  /* SHOW WHEN ACTIVE */
+  .menu-links.active {
+    display: flex;
+  }
+
+  /* STACK MENU ITEMS */
+  .menu-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .menu-right {
+    margin-left: 0;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .menu a {
+    display: block;
+    width: 100%;
+    padding: 12px;
+  }
+}
+
 .close-btn{
   position:absolute;
   top:20px;
