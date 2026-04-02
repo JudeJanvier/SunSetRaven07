@@ -1,36 +1,208 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>QR Code Generator</title>
-    <script src="qrcode.min.js"></script> <!-- local file -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deployment Processing Center</title>
+
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body style="font-family:Arial; text-align:center; padding:40px;">
+<body>
+  <header>
+    <div class="header-wrap">
+      <div class="brand">
+        <img src="logo.png" alt="DPC Logo" class="logo-img">
+        <div class="brand-text">
+          <h1>Deployment Processing Center</h1>
+          <p>21st Theater Sustainment Command | DPC Map & Visitor Guidance</p>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <h2>QR Code Generator</h2>
+  <nav class="menu">
+    <div class="menu-wrap">
+      <a href="index.html">Home</a>
 
-    <!-- Input box -->
-    <input type="text" id="text" placeholder="Enter URL or text" style="width:300px; padding:10px;">
-    
-    <br><br>
+      <div class="dropdown">
+        <a href="#">Mayor Cell</a>
+        <div class="dropdown-content">
+          <a href="contact.html">Contact</a>
+          <a href="locations.html">Locations</a>
+        </div>
+      </div>
 
-    <!-- Button -->
-    <button onclick="generateQR()" style="padding:10px 20px;">Generate</button>
+      <div class="dropdown">
+        <a href="#">Services</a>
+        <div class="dropdown-content">
+          <a href="transportation.html">Transportation</a>
+          <a href="food.html">Food</a>
+        </div>
+      </div>
 
-    <br><br>
+      <a href="#arrival-tips">Arrival Tips</a>
+      <a href="#dpc-map">DPC Map</a>
 
-    <!-- QR output -->
-    <div id="qrcode"></div>
+      <!-- RIGHT SIDE MENU -->
+      <div class="menu-right">
+        <a href="contact.html">Contact</a>
+        <a href="flight.html">Flight Status</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero" style="background:url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;position:relative;padding:50px 40px;color:white;">
+
+    <!-- dark overlay for readability -->
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(20,38,63,0.65);"></div>
+
+    <div class="hero-content" style="position:relative;z-index:2;max-width:900px;">
+
+      <h2 style="font-size:32px;margin:0 0 14px 0;font-weight:700;">
+        Welcome to the Deployment Processing Center
+      </h2>
+
+      <p style="font-size:18px;line-height:1.6;max-width:700px;">
+        This portal provides important arrival information, facility guidance, transportation resources, and support services for personnel assigned to the DPC.
+      </p>
+
+    </div>
+
+  </section>
+
+  <section class="go-policy">
+    <div class="go-box">
+      <h3>General Order #1 – Alcohol Policy</h3>
+      <p>
+        Alcohol is strictly prohibited for all personnel assigned to the DPC, regardless of branch of service.
+        Consumption is not allowed on or off the installation during your stay. Possession of alcohol is also prohibited.
+      </p>
+
+      <p><strong>General Order #1 signed by the Commanding General, 21st TSC</strong></p>
+
+      <p>
+        If DPC staff detect the smell of alcohol or witness alcohol consumption, they are required to notify:
+      </p>
+
+      <ul>
+        <li>Military Police</li>
+        <li>Your Chain of Command</li>
+      </ul>
+    </div>
+  </section>
+
+  <main>
+    <section id="dpc-map">
+      
+
+      <div class="grid">
+        <div class="card">
+          <h3>DPC Area Map</h3>
+          <p style="text-align:center;margin-bottom:12px;color:#556575;">Tap the map to expand fullscreen.</p>
+          <div class="map-embed">
+            <img src="dpc-map.png" alt="DPC Area Map" style="width:100%;height:auto;display:block;cursor:pointer;" onclick="openMap()">
+          </div>
+        </div>
+
+        <div class="card" id="location-details">
+          <h3>DPC Information</h3>
+          <div class="info-list">
+
+            <div class="info-item">
+              <strong>1. Primary Check-In </strong>
+              <ul>
+                <li>Facility: DPC / Reception</li>
+                <li>Location: Building 235 </li>
+                <li>Report immediately upon arrival</li>
+                <li><strong>Bring copies of your orders</strong></li>
+                <li><strong>Bring your CAC</strong></li>
+              </ul>
+            </div>
+
+            <div class="info-item">
+              <strong>2. Billeting & Laundry</strong>
+              <ul>
+                <li>Billeting: Assigned by PHA (Male/Female separate)</li>
+                <li>Laundry: Building 268 (Washers / Dryers / Detergent are FREE)</li>
+                <li><strong>Laundry closed: 2100 – 0730</strong></li>
+              </ul>
+            </div>
+
+            <div class="info-item">
+              <strong>3. Recreation & Connectivity (USO)</strong>
+              <ul>
+                <li>Facility: USO Center</li>
+                <li>Location: Building 235</li>
+                <li>Hours: Open 24/7</li>
+                <li>Services: TV, Ping Pong, Pool, snacks, and coffee</li>
+              </ul>
+            </div>
+
+            
+
+          </div>
+        </div>
+      </div>
+        </div>
+    </section>
+
+    <section class="contact-bar">
+  <div class="contact-wrap">
+    <div class="contact-title">Emergency & Contact Information</div>
+
+    <div class="contact-grid">
+
+      <div class="contact-item">
+        <strong>Emergency</strong>
+        DSN: 112<br>
+        Cell: +49-6371-47-112
+      </div>
+
+      <div class="contact-item">
+        <strong>DPC Director</strong>
+        Mr. Charles Wallace<br>
+        DSN: +49 611 143-528-3300
+      </div>
+
+      <div class="contact-item">
+        <strong>PHA Chief</strong>
+        Mr. Thomas Smith<br>
+        DSN: +49 611 143-528-3304
+      </div>
+
+    </div>
+  </div>
+</section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Deployment Processing Center | Built for DPC information support</p>
+  </footer>
+
+
+<!-- MAP MODAL -->
+<div class="map-modal" id="mapModal">
+  <span class="close-btn" onclick="closeMap()">&times;</span>
+  <img src="dpc-map.png" alt="Full Map">
+</div>
 
 <script>
-function generateQR() {
-    document.getElementById("qrcode").innerHTML = ""; // clear old QR
+function openMap(){
+  document.getElementById('mapModal').style.display='flex';
+}
 
-    new QRCode(document.getElementById("qrcode"), {
-        text: document.getElementById("text").value,
-        width: 200,
-        height: 200
-    });
+function closeMap(){
+  document.getElementById('mapModal').style.display='none';
+}
+
+// close when clicking outside image
+window.onclick = function(e){
+  const modal = document.getElementById('mapModal');
+  if(e.target === modal){
+    modal.style.display='none';
+  }
 }
 </script>
 
