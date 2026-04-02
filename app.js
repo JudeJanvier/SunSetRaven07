@@ -13,12 +13,16 @@ window.onclick = function(e){
   }
 }
 
+function toggleMenu() {
+  const menu = document.querySelector('.menu-links');
+  menu.classList.toggle('active');
+}
+
 // ✅ MOBILE DROPDOWN FIX
-document.querySelectorAll('.dropdown > a').forEach(link => {
-  link.addEventListener('click', function(e) {
+document.querySelectorAll('.menu-links a').forEach(link => {
+  link.addEventListener('click', () => {
     if (window.innerWidth <= 768) {
-      e.preventDefault();
-      this.parentElement.classList.toggle('active');
+      document.querySelector('.menu-links').classList.remove('active');
     }
   });
 });
