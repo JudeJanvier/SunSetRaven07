@@ -1,277 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital CONOP Builder</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOC | COMMAND DASHBOARD</title>
   <style>
     :root {
-      --bg: #f3f4f6;
-      --border-color: #333;
-      --header-bg: #fff;
-      --accent: #4b5320; /* Army Green */
+      --army-green: #4b5320;
+      --tactical-bg: #0a0c0e;
+      --panel: #161b22;
+      --accent: #d4af37; /* Gold */
+      --success: #3fb950;
+      --danger: #f85149;
+      --text-main: #c9d1d9;
+      --text-muted: #8b949e;
+      --border: #30363d;
+      --edit-glow: rgba(212, 175, 55, 0.3);
     }
+
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Arial", sans-serif;
-      background-color: var(--bg);
-      color: #000;
-      padding: 20px;
+      font-family: "Segoe UI", "Courier New", monospace;
+      background-color: var(--tactical-bg);
+      color: var(--text-main);
     }
 
-    /* Controls */
-    .controls {
-      background: #333;
+    .classification-banner {
+      background: var(--danger);
       color: white;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      font-weight: bold;
+      padding: 4px;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
-    .edit-toggle {
-      background: var(--accent);
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      background: var(--panel);
+      border-right: 2px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .unit-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+
+    .nav-label {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .toggle-btn {
+      width: 100%;
+      background: var(--army-green);
       color: white;
       border: none;
-      padding: 8px 16px;
+      padding: 12px;
+      font-weight: bold;
       cursor: pointer;
       border-radius: 4px;
-      font-weight: bold;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      transition: 0.3s;
     }
 
-    /* The "Slide" Container */
-    .conop-slide {
-      background: white;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      border: 2px solid var(--border-color);
+    .toggle-btn.editing { background: var(--accent); color: black; }
+
+    /* Main Content Layout */
+    .main { padding: 25px; }
+
+    .conop-grid {
       display: grid;
-      grid-template-columns: 25% 50% 25%;
-      grid-template-rows: auto auto auto;
-      min-height: 800px;
+      grid-template-columns: 320px 1fr 320px; /* 3-Column functional layout */
+      grid-template-rows: auto 1fr;
+      gap: 15px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      padding: 15px;
     }
 
     /* Header */
     .slide-header {
       grid-column: span 3;
-      border-bottom: 2px solid var(--border-color);
-      padding: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      text-align: center;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
-    .slide-header h1 {
-      flex-grow: 1;
-      margin: 0;
-      font-size: 2.5rem;
-      text-transform: uppercase;
-    }
-
-    .unit-logo { width: 80px; height: 80px; object-fit: contain; }
+    .slide-header h1 { margin: 0; font-size: 2rem; color: white; }
 
     /* Columns */
-    .col { border-right: 1px solid var(--border-color); padding: 15px; }
-    .col:last-child { border-right: none; }
+    .col { display: flex; flex-direction: column; gap: 15px; }
 
-    /* Sections */
-    .section-box {
-      margin-bottom: 20px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 10px;
-    }
-
-    .section-title {
-      font-weight: bold;
-      text-decoration: underline;
-      display: block;
-      margin-bottom: 5px;
-      text-transform: uppercase;
-    }
-
-    /* Map Area */
-    .map-container {
-      background: #e5e7eb;
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 15px;
       position: relative;
-      height: 400px;
-      border-bottom: 2px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+
+    /* Map / Image Container */
+    .map-container {
+      background: #000;
+      height: 450px;
+      border: 1px solid var(--border);
+      position: relative;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .map-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    #conop-image { width: 100%; height: 100%; object-fit: contain; }
 
-    .image-upload-label {
+    .upload-overlay {
       position: absolute;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 10px;
+      background: rgba(0,0,0,0.8);
+      color: var(--accent);
+      padding: 20px;
+      border: 2px dashed var(--accent);
       cursor: pointer;
-      border-radius: 5px;
-      display: none; /* Hidden by default */
+      display: none;
     }
 
-    /* Editable State */
-    [contenteditable="true"] {
-      background-color: #fff9c4;
-      padding: 2px;
-      border-radius: 2px;
-      outline: none;
+    /* Editable States */
+    .editable { outline: none; transition: 0.2s; }
+    .is-editing .editable {
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: inset 0 0 5px var(--edit-glow);
+      padding: 5px;
     }
+    .is-editing .upload-overlay { display: block; }
 
-    [contenteditable="true"]:hover { background-color: #fff176; }
-
-    .editing .image-upload-label { display: block; }
-    
-    .timeline-table { width: 100%; font-size: 0.9rem; }
-    .timeline-table td { padding: 2px 0; }
+    .timeline-list { list-style: none; padding: 0; margin: 0; font-family: monospace; }
+    .timeline-list li { margin-bottom: 8px; font-size: 0.9rem; }
+    .timeline-list strong { color: var(--accent); margin-right: 10px; }
 
   </style>
 </head>
-<body>
+<body class="is-presentation">
 
-  <div class="controls">
-    <div><strong>MODE:</strong> <span id="mode-text">Presentation</span></div>
-    <button class="edit-toggle" onclick="toggleEdit()">Toggle Edit Mode</button>
-  </div>
+  <div class="classification-banner">SECRET // NOFORN</div>
 
-  <div class="conop-slide" id="slide-content">
-    
-    <header class="slide-header">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/US_Army_Insignia.svg" class="unit-logo" alt="Logo Left">
-      <h1 contenteditable="false">Charlie Co ACFT 20MAR26</h1>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/App_icon_of_United_States_Army.svg" class="unit-logo" alt="Logo Right">
-    </header>
-
-    <aside class="col">
-      <div class="section-box">
-        <span class="section-title">Mission Statement</span>
-        <div class="editable-content" contenteditable="false">
-          Charlie Company will conduct the ACFT on 20MAR26 at Ft. Lee, VA IOT familiarize the cadets with the new Army standard PT test.
-        </div>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="unit-header">
+        <div style="font-weight: bold; font-size: 1.2rem;">UNIT DASHBOARD</div>
+        <div style="color: var(--text-muted); font-size: 0.8rem;">OPID: ACFT-2026-03</div>
       </div>
 
-      <div class="section-box">
-        <span class="section-title">Commander's Intent</span>
-        <div class="editable-content" contenteditable="false">
-          Cadets will learn how to conduct the ACFT.
-        </div>
+      <div class="nav-group">
+        <div class="nav-label">System Control</div>
+        <button id="toggleEdit" class="toggle-btn">Enter Edit Mode</button>
       </div>
 
-      <div class="section-box">
-        <span class="section-title">End State</span>
-        <div class="editable-content" contenteditable="false">
-          Cadets will know how to properly administer the ACFT and conduct new events.
+      <div class="nav-group" style="margin-top: auto;">
+        <div class="nav-label">Status Summary</div>
+        <div style="font-size: 0.8rem; font-family: monospace;">
+          Personnel: <span style="color: var(--success);">GREEN</span><br>
+          Logistics: <span style="color: var(--accent);">AMBER</span><br>
+          Weather: <span style="color: var(--success);">FAVORABLE</span>
         </div>
-      </div>
-
-      <div class="section-box">
-        <span class="section-title">Key Tasks</span>
-        <ul class="editable-content" contenteditable="false">
-          <li>Safely travel to & from Ft. Lee</li>
-          <li>Properly conduct the ACFT</li>
-          <li>Understand branch standards</li>
-        </ul>
       </div>
     </aside>
 
-    <main class="col" style="padding:0; grid-column: span 1;">
-      <div class="map-container">
-        <img src="https://via.placeholder.com/600x400?text=Click+Edit+Mode+to+Upload+Map" id="main-map" class="map-image">
-        <label for="map-upload" class="image-upload-label">Upload New Map/Image</label>
-        <input type="file" id="map-upload" style="display:none" accept="image/*" onchange="loadMap(event)">
-      </div>
-      
-      <div style="padding:15px;">
-        <span class="section-title">Timeline</span>
-        <div class="editable-content" contenteditable="false">
-          <table class="timeline-table">
-            <tr><td>0230-</td><td>FF at Longwood ROTC office</td></tr>
-            <tr><td>0300-</td><td>SP from Longwood ROTC office</td></tr>
-            <tr><td>0430-</td><td>Arrive at Ft. Lee / Begin ACFT</td></tr>
-            <tr><td>0730-</td><td>Complete ACFT & Accountability</td></tr>
-            <tr><td>0905-</td><td>Accountability & Dismissal</td></tr>
-          </table>
-        </div>
+    <main class="main">
+      <div class="conop-grid" id="main-slide">
         
-        <div style="margin-top:20px;">
-          <p><strong>UNIFORM:</strong> <span class="editable-content" contenteditable="false">Winter APFU, water source.</span></p>
-          <p><strong>WEATHER:</strong> <span class="editable-content" contenteditable="false">High 55F / Low 38F</span></p>
+        <header class="slide-header">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/US_Army_Insignia.svg" width="50" alt="Logo">
+          <h1 class="editable" contenteditable="false">CHARLIE CO ACFT 20MAR26</h1>
+          <div style="text-align: right; font-family: monospace; font-size: 0.8rem; color: var(--accent);">
+            DTG: 200430ZMAR26<br>FT. LEE, VA
+          </div>
+        </header>
+
+        <div class="col">
+          <div class="card">
+            <h3>Mission Statement</h3>
+            <div class="editable" contenteditable="false">
+              Charlie Company will conduct the ACFT on 20MAR26 at Ft. Lee, VA IOT familiarize the cadets with the new Army standard PT test.
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Commander's Intent</h3>
+            <div class="editable" contenteditable="false">
+              Cadets will learn how to conduct the ACFT safely and within standard.
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Key Tasks</h3>
+            <div class="editable" contenteditable="false">
+              • Safe movement to/from site<br>
+              • Accurate event validation<br>
+              • 100% Accountability
+            </div>
+          </div>
         </div>
+
+        <div class="col" style="flex-grow: 1;">
+          <div class="map-container">
+            <img src="https://via.placeholder.com/800x450/111/d4af37?text=UPLOAD+MAP+IMAGE" id="conop-image">
+            <label for="image-input" class="upload-overlay">
+              CLICK TO UPLOAD CONOP IMAGE / MAP
+            </label>
+            <input type="file" id="image-input" style="display: none;" accept="image/*">
+          </div>
+
+          <div class="card">
+            <h3>Operational Timeline</h3>
+            <ul class="timeline-list editable" contenteditable="false">
+              <li><strong>0230</strong> First Formation</li>
+              <li><strong>0300</strong> SP from Longwood</li>
+              <li><strong>0430</strong> Arrive Ft. Lee / Begin ACFT</li>
+              <li><strong>0730</strong> Complete ACFT / Accountability</li>
+              <li><strong>0905</strong> Final Dismissal</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <h3>Concept of Operations</h3>
+            <div class="editable" contenteditable="false" style="font-size: 0.85rem; line-height: 1.6;">
+              <strong>Phase I:</strong> Prep & Formation<br>
+              <strong>Phase II:</strong> Infiltration (Bus)<br>
+              <strong>Phase III:</strong> Execution (Testing)<br>
+              <strong>Phase IV:</strong> Recovery (Return)<br>
+              <strong>Phase V:</strong> Closeout
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Uniform / Weather</h3>
+            <div class="editable" contenteditable="false">
+              <strong>Uniform:</strong> Winter APFU<br>
+              <strong>Temp:</strong> High 54°F / Low 32°F<br>
+              <strong>Precip:</strong> 10% Chance
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: auto;">
+            <h3>Key Personnel</h3>
+            <div class="editable" contenteditable="false">
+              <strong>c/OIC:</strong> CDT Cate<br>
+              <strong>c/AOIC:</strong> CDT Ramsey
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
-
-    <aside class="col">
-      <div class="section-box">
-        <span class="section-title">Concept of Operations</span>
-        <div class="editable-content" contenteditable="false">
-          <strong>Phase I:</strong> First Formation<br>
-          <strong>Phase II:</strong> Travel to Ft. Lee<br>
-          <strong>Phase III:</strong> Conduct ACFT<br>
-          <strong>Phase IV:</strong> Travel back to Longwood<br>
-          <strong>Phase V:</strong> Accountability & Dismissal
-        </div>
-      </div>
-
-      <div class="section-box">
-        <div class="editable-content" contenteditable="false" style="font-size: 0.85rem;">
-          Phase II begins with SP from Longwood @0300 and ends with arrival at Ft. Lee. Phase III concludes with ACFT completion and final accountability.
-        </div>
-      </div>
-
-      <div class="section-box" style="margin-top: 50px;">
-        <span class="section-title">Key Personnel</span>
-        <div class="editable-content" contenteditable="false">
-          c/OIC: CDT Cate<br>
-          c/AOIC: CDT Ramsey
-        </div>
-      </div>
-    </aside>
-
   </div>
 
   <script>
+    const toggleBtn = document.getElementById('toggleEdit');
+    const body = document.body;
+    const editables = document.querySelectorAll('.editable');
+    const imageInput = document.getElementById('image-input');
+    const displayImage = document.getElementById('conop-image');
+
     let isEditing = false;
 
-    function toggleEdit() {
+    // Toggle Edit Mode
+    toggleBtn.addEventListener('click', () => {
       isEditing = !isEditing;
-      const slide = document.getElementById('slide-content');
-      const modeText = document.getElementById('mode-text');
-      const editables = document.querySelectorAll('[contenteditable]');
-      const header = document.querySelector('h1');
-
+      
       if (isEditing) {
-        slide.classList.add('editing');
-        modeText.innerText = "Edit Mode (Yellow areas are clickable)";
+        body.classList.replace('is-presentation', 'is-editing');
+        toggleBtn.textContent = 'Save & Lock Brief';
+        toggleBtn.classList.add('editing');
         editables.forEach(el => el.contentEditable = "true");
-        header.contentEditable = "true";
       } else {
-        slide.classList.remove('editing');
-        modeText.innerText = "Presentation";
+        body.classList.replace('is-editing', 'is-presentation');
+        toggleBtn.textContent = 'Enter Edit Mode';
+        toggleBtn.classList.remove('editing');
         editables.forEach(el => el.contentEditable = "false");
-        header.contentEditable = "false";
       }
-    }
+    });
 
-    function loadMap(event) {
-      const output = document.getElementById('main-map');
-      output.src = URL.createObjectURL(event.target.files[0]);
-      output.onload = function() {
-        URL.revokeObjectURL(output.src) // free memory
+    // Handle Image Upload
+    imageInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          displayImage.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
       }
-    }
+    });
   </script>
 </body>
 </html>
