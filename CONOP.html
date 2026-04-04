@@ -1,322 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TOC | CONOP DASHBOARD</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOC | BATTLE COMMAND CENTER</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --panel: #161b22;
+            --card: rgba(22, 27, 34, 0.7);
+            --border: #30363d;
+            --accent: #d4af37; /* Tactical Gold */
+            --army-green: #4b5320;
+            --text: #c9d1d9;
+            --danger: #f85149;
+            --success: #3fb950;
+        }
 
-<style>
-:root {
-  --bg:#0a0c0e;
-  --panel:#111827;
-  --card:#0f1720;
-  --border:#2b3440;
-  --accent:#d4af37;
-  --text:#c9d1d9;
-}
+        * { box-sizing: border-box; transition: all 0.2s ease; }
+        
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', 'Roboto', monospace;
+            background: var(--bg);
+            color: var(--text);
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-*{box-sizing:border-box}
-body{margin:0;font-family:Segoe UI, monospace;background:var(--bg);color:var(--text);display:grid;grid-template-columns:280px 1fr;height:100vh}
+        /* SIDEBAR STYLING */
+        .sidebar {
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.sidebar{background:#0f172a;border-right:2px solid var(--border);padding:15px}
-.mission-tab{border:1px solid var(--border);padding:10px;margin-bottom:6px;cursor:pointer}
-.mission-tab.active{border-color:var(--accent);background:rgba(212,175,55,0.1)}
+        .sidebar-header {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
 
-.main{padding:15px;overflow:auto}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.title{font-size:1.6rem;border:1px solid var(--accent);padding:6px 15px}
+        .mission-tab {
+            border: 1px solid var(--border);
+            padding: 12px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
 
-.slide{display:none;grid-template-columns:25% 50% 25%;gap:12px}
-.slide.active{display:grid}
+        .mission-tab:hover { background: rgba(212, 175, 55, 0.05); border-color: var(--accent); }
+        .mission-tab.active { 
+            border-color: var(--accent); 
+            background: rgba(212, 175, 55, 0.1); 
+            box-shadow: inset 4px 0 0 var(--accent);
+        }
 
-.section{
-  border:1px solid var(--border);
-  background:var(--card);
-  padding:10px;
-  cursor:grab;
-}
-.section.dragging{opacity:0.5}
-.section-title{
-  color:var(--accent);
-  font-size:0.8rem;
-  border-bottom:1px solid var(--border);
-  margin-bottom:6px;
-  padding-bottom:4px;
-  display:flex;justify-content:space-between;align-items:center;
-}
+        /* MAIN CONTENT */
+        .main { padding: 0; display: flex; flex-direction: column; height: 100vh; }
 
-.delete-btn{color:red;cursor:pointer;font-weight:bold}
+        .classification-banner {
+            background: var(--danger);
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            padding: 4px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+        }
 
-.box{
-  background:#1a2230;
-  border:1px solid var(--accent);
-  padding:8px;
-}
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+        }
 
-.left,.right{display:flex;flex-direction:column;gap:10px}
-.center{display:flex;flex-direction:column;gap:10px}
+        .title-area h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
 
-.map{
-  height:300px;
-  border:2px dashed var(--accent);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  cursor:pointer;
-}
-.map img{width:100%;height:100%;object-fit:contain}
+        /* GRID SYSTEM */
+        .content-body { padding: 20px; overflow-y: auto; flex-grow: 1; }
+        
+        .slide { display: none; grid-template-columns: 300px 1fr 300px; gap: 15px; }
+        .slide.active { display: grid; }
 
-.timeline{
-  border:1px solid var(--border);
-  padding:10px;
-  background:#0d1117;
-}
+        /* COMPONENT CARDS */
+        .section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
 
-button{background:#111827;border:1px solid var(--border);color:white;padding:6px 10px;cursor:pointer}
-.editing [contenteditable="true"]{outline:1px dashed var(--accent)}
-</style>
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .section-title {
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .box { font-size: 0.9rem; line-height: 1.6; color: #d1d5db; min-height: 40px; }
+
+        /* MAP AREA */
+        .map-wrapper {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .map-display {
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle, #1a2230 0%, #0a0c0e 100%);
+        }
+
+        .map-display img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* CONTROLS */
+        .btn-tac {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .btn-tac:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-add { border-color: var(--success); color: var(--success); margin-top: 10px; width: 100%; }
+
+        .editing [contenteditable="true"] { background: rgba(255,255,255,0.05); outline: 1px dashed var(--accent); padding: 5px; }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .time-tag { color: var(--accent); font-family: monospace; font-weight: bold; width: 60px; }
+    </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-  <div id="tabs"></div>
-  <button onclick="addMission()">+ Add Mission</button>
-</div>
+<aside class="sidebar">
+    <div class="sidebar-header">Unit Dashboard</div>
+    <div id="tabs"></div>
+    <button class="btn-tac btn-add" onclick="addMission()">+ New Mission</button>
+</aside>
 
-<div class="main">
-  <div class="header">
-    <div>LOGO</div>
-    <div class="title" contenteditable="true">CONOP TITLE</div>
-    <div>DTG / LOCATION</div>
-  </div>
+<main class="main">
+    <div class="classification-banner">SECRET // NOFORN</div>
+    
+    <div class="top-nav">
+        <div class="title-area">
+            <h1 contenteditable="true" id="current-title">OPERATION BEST SQUAD</h1>
+            <small style="color: var(--accent); font-family: monospace;">DTG: 081200MAY25 | LOC: GRAFENWOEHR, GE</small>
+        </div>
+        <div class="controls">
+            <button class="btn-tac" onclick="toggleEdit()" id="edit-btn">Enter Create Mode</button>
+        </div>
+    </div>
 
-  <button onclick="toggleEdit()">Edit Mode</button>
-
-  <div id="slides"></div>
-</div>
+    <div class="content-body" id="slides"></div>
+</main>
 
 <template id="template">
-<div class="slide">
+    <div class="slide">
+        <div class="left"></div>
+        
+        <div class="center">
+            <div class="map-wrapper">
+                <div class="section-header" style="padding: 10px;">
+                    <span class="section-title">Satellite Overlay / Graphics</span>
+                    <div style="display:flex; gap:5px;">
+                        <button class="btn-tac" onclick="triggerUpload(this)">Upload</button>
+                        <button class="btn-tac" onclick="toggleMap(this)">Map</button>
+                    </div>
+                </div>
+                <div class="map-display">
+                    <img class="img-preview" src="https://via.placeholder.com/800x400/0d1117/d4af37?text=NO+IMAGE+DATA">
+                    <input type="file" hidden onchange="uploadImg(event,this)">
+                </div>
+            </div>
 
-<div class="left">
+            <div class="section" style="margin-top: 15px;">
+                <div class="section-header">
+                    <span class="section-title">Operational Timeline</span>
+                </div>
+                <div class="timeline-list editable" contenteditable="false"></div>
+                <div class="timeline-form" style="margin-top:10px; display:flex; gap:10px;">
+                    <input type="time" class="time-in" style="background:#000; border:1px solid var(--border); color:white;">
+                    <input type="text" class="task-in" placeholder="Task Detail" style="background:#000; border:1px solid var(--border); color:white; flex-grow:1;">
+                    <button class="btn-tac" onclick="addTimelineItem(this)">Add</button>
+                </div>
+            </div>
+        </div>
 
-</div>
-
-<div class="center">
-
-<div class="map">
-  <div style="position:absolute;top:6px;left:6px;z-index:3;display:flex;gap:6px;">
-    <button onclick="triggerUpload(this.closest('.map'))">Upload Image</button>
-    <button onclick="toggleMapMode(this.closest('.map'),'iframe')">Google Map</button>
-    <button onclick="toggleMapMode(this.closest('.map'),'image')">Image Mode</button>
-  </div>
-  <div class="map-layer image-layer" style="position:absolute;inset:0;display:block;">
-    <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--accent);">CLICK "Upload Image"</span>
-    <img class="img">
-    <input type="file" hidden onchange="uploadImg(event,this)">
-  </div>
-  <div class="map-layer iframe-layer" style="position:absolute;inset:0;display:none;">
-    <iframe class="map-iframe" src="" style="width:100%;height:100%;border:0;"></iframe>
-    <div style="position:absolute;top:40px;left:6px;z-index:3;background:#0008;padding:6px;border:1px solid var(--border);">
-      <input type="text" placeholder="Paste Google Maps embed URL" class="map-url" style="width:260px;">
-      <button onclick="setMapUrl(this.closest('.map'))">Load</button>
+        <div class="right"></div>
     </div>
-  </div>
-</div>
-
-<div class="timeline">
-<div class="section-title">OPERATIONAL TIMELINE</div>
-<div class="timeline-list editable" contenteditable="false"></div>
-<div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
-<input type="time" class="time-input">
-<input type="text" class="task-input" placeholder="Task">
-<button onclick="addTimelineItem(this)">Add</button>
-</div>
-</div>
-
-</div>
-
-<div class="right">
-
-</div>
-
-</div>
 </template>
 
 <script>
-let count=0
-let edit=false
-let dragSrc=null
+let count=0, edit=false;
 
-function createSection(title="NEW SECTION", content="Type..."){
-  const section=document.createElement('div')
-  section.className='section'
-  section.draggable=true
-
-  section.innerHTML=`
-  <div class="section-title" contenteditable="true">${title}<span class="delete-btn" onclick="deleteSection(this)">×</span></div>
-  <div class="box editable" contenteditable="false">${content}</div>
-  `
-
-  section.addEventListener('dragstart',()=>{
-    dragSrc=section
-    section.classList.add('dragging')
-  })
-
-  section.addEventListener('dragend',()=>{
-    section.classList.remove('dragging')
-  })
-
-  section.addEventListener('dragover',(e)=>{
-    e.preventDefault()
-    const container=section.parentElement
-    const after=getDragAfterElement(container,e.clientY)
-    if(after==null) container.appendChild(dragSrc)
-    else container.insertBefore(dragSrc,after)
-  })
-
-  return section
+function createSection(title="SECTION HEADER", content="Data entry required..."){
+    const section=document.createElement('div');
+    section.className='section';
+    section.innerHTML=`
+        <div class="section-header">
+            <span class="section-title" contenteditable="true">${title}</span>
+            <span style="color:var(--danger); cursor:pointer;" onclick="this.closest('.section').remove()">×</span>
+        </div>
+        <div class="box editable" contenteditable="false">${content}</div>`;
+    return section;
 }
 
-function getDragAfterElement(container,y){
-  const elements=[...container.querySelectorAll('.section:not(.dragging)')]
-  return elements.reduce((closest,child)=>{
-    const box=child.getBoundingClientRect()
-    const offset=y-box.top-box.height/2
-    if(offset<0 && offset>closest.offset){
-      return {offset:offset,element:child}
-    }else return closest
-  },{offset:Number.NEGATIVE_INFINITY}).element
-}
+function addMission(name="New Mission"){
+    count++;
+    let id="m"+count;
+    let tab=document.createElement('div');
+    tab.className='mission-tab';
+    tab.innerHTML=`<span>${name}</span><small>#${count}</small>`;
+    tab.onclick=()=>switchMission(id,tab);
+    document.getElementById('tabs').appendChild(tab);
 
-function deleteSection(btn){
-  btn.closest('.section').remove()
-}
+    let temp=document.getElementById('template').content.cloneNode(true);
+    let slide=temp.querySelector('.slide');
+    slide.id=id;
 
-function addMission(name="Mission"){
-count++
-let id="m"+count
+    // PRE-LOAD WITH BEST SQUAD DATA
+    let left=slide.querySelector('.left');
+    left.appendChild(createSection("Mission Statement","21st STB conducts Best Squad Competition from 18-24 APR 2026."));
+    left.appendChild(createSection("Commander's Intent","Identify the STB's Best Squad while enforcing FM 7-22 standards."));
 
-let tab=document.createElement('div')
-tab.className='mission-tab'
-tab.innerText=name
+    let right=slide.querySelector('.right');
+    right.appendChild(createSection("Concept of Operations","Phase I: Preparation\nPhase II: Execution\nPhase III: Recovery"));
+    right.appendChild(createSection("Key Personnel","OIC: CPT Evans\nNCOIC: SFC Smith"));
 
-tab.onclick=()=>switchMission(id,tab)
-document.getElementById('tabs').appendChild(tab)
-
-let temp=document.getElementById('template').content.cloneNode(true)
-let slide=temp.querySelector('.slide')
-slide.id=id
-
-// default sections
-let left=slide.querySelector('.left')
-left.appendChild(createSection("MISSION STATEMENT","Type mission..."))
-left.appendChild(createSection("COMMANDER'S INTENT","Type intent..."))
-
-let right=slide.querySelector('.right')
-right.appendChild(createSection("CONCEPT OF OPERATIONS","Phase I"))
-
-// add buttons
-let addLeftBtn=document.createElement('button')
-addLeftBtn.innerText='+ Add Section'
-addLeftBtn.onclick=()=>left.appendChild(createSection())
-left.appendChild(addLeftBtn)
-
-let addRightBtn=document.createElement('button')
-addRightBtn.innerText='+ Add Section'
-addRightBtn.onclick=()=>right.appendChild(createSection())
-right.appendChild(addRightBtn)
-
-
-document.getElementById('slides').appendChild(slide)
-
-switchMission(id,tab)
+    document.getElementById('slides').appendChild(slide);
+    switchMission(id,tab);
 }
 
 function switchMission(id,tab){
-document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'))
-document.querySelectorAll('.mission-tab').forEach(t=>t.classList.remove('active'))
-
-document.getElementById(id).classList.add('active')
-tab.classList.add('active')
+    document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.mission-tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    tab.classList.add('active');
+    document.getElementById('current-title').innerText = tab.querySelector('span').innerText;
 }
 
 function toggleEdit(){
-edit=!edit
-
-document.querySelectorAll('.editable').forEach(e=>e.contentEditable=edit)
+    edit=!edit;
+    document.body.classList.toggle('editing', edit);
+    document.querySelectorAll('.editable').forEach(e=>e.contentEditable=edit);
+    document.getElementById('edit-btn').innerText = edit ? "Save & Lock Brief" : "Enter Create Mode";
+    document.getElementById('edit-btn').style.borderColor = edit ? "var(--success)" : "var(--border)";
 }
 
-function triggerUpload(mapEl){
-  // ensure image mode is visible
-  toggleMapMode(mapEl,'image')
-  const input=mapEl.querySelector('.image-layer input')
-  input.click()
-}
-
-function toggleMapMode(mapEl,mode){
-  const imgLayer = mapEl.querySelector('.image-layer')
-  const iframeLayer = mapEl.querySelector('.iframe-layer')
-  if(mode==='iframe'){
-    imgLayer.style.display='none'
-    iframeLayer.style.display='block'
-  }else{
-    imgLayer.style.display='block'
-    iframeLayer.style.display='none'
-  }
-}
-
-function setMapUrl(mapEl){
-  const url = mapEl.querySelector('.map-url').value.trim()
-  if(!url) return
-  // accept Google Maps embed or regular link; try to convert regular link to embed
-  let src = url
-  if(!url.includes('embed')){
-    try{
-      const u = new URL(url)
-      // simple conversion for place links
-      if(u.hostname.includes('google.')){
-        src = 'https://www.google.com/maps?q='+encodeURIComponent(url)+'&output=embed'
-      }
-    }catch(e){}
-  }
-  mapEl.querySelector('.map-iframe').src = src
+function triggerUpload(btn){
+    btn.closest('.map-wrapper').querySelector('input[type="file"]').click();
 }
 
 function uploadImg(e,input){
-let file=e.target.files[0]
-if(!file) return
-let reader=new FileReader()
-reader.onload=r=>{
-input.closest('.map').querySelector('.img').src=r.target.result
-}
-reader.readAsDataURL(file)
+    let file=e.target.files[0];
+    if(file){
+        let reader=new FileReader();
+        reader.onload=r=>{ input.closest('.map-wrapper').querySelector('.img-preview').src=r.target.result; }
+        reader.readAsDataURL(file);
+    }
 }
 
 function addTimelineItem(btn){
-const container = btn.closest('.timeline')
-const time = container.querySelector('.time-input').value
-const task = container.querySelector('.task-input').value
+    const container = btn.closest('.section');
+    const time = container.querySelector('.time-in').value;
+    const task = container.querySelector('.task-in').value;
+    if(!time || !task) return;
 
-if(!time || !task) return
-
-const list = container.querySelector('.timeline-list')
-let items = list.innerHTML.split('<br>').filter(i=>i.trim()!="")
-items.push(`${time} ${task}`)
-items.sort((a,b)=>a.localeCompare(b))
-list.innerHTML = items.join('<br>')
-
-container.querySelector('.time-input').value=""
-container.querySelector('.task-input').value=""
+    const list = container.querySelector('.timeline-list');
+    list.innerHTML += `<div class="timeline-item"><span class="time-tag">${time}</span><span>${task}</span></div>`;
+    container.querySelector('.time-in').value="";
+    container.querySelector('.task-in').value="";
 }
 
 window.onload=()=>{
-addMission('EPFA')
-addMission('AFT')
+    addMission('EPFA');
+    addMission('AFT');
 }
 </script>
-
 </body>
 </html>
