@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital CONOP Builder</title>
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --border-color: #333;
+      --header-bg: #fff;
+      --accent: #4b5320; /* Army Green */
+    }
+
+    body {
+      margin: 0;
+      font-family: "Arial", sans-serif;
+      background-color: var(--bg);
+      color: #000;
+      padding: 20px;
+    }
+
+    /* Controls */
+    .controls {
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .edit-toggle {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    /* The "Slide" Container */
+    .conop-slide {
+      background: white;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 2px solid var(--border-color);
+      display: grid;
+      grid-template-columns: 25% 50% 25%;
+      grid-template-rows: auto auto auto;
+      min-height: 800px;
+    }
+
+    /* Header */
+    .slide-header {
+      grid-column: span 3;
+      border-bottom: 2px solid var(--border-color);
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    .slide-header h1 {
+      flex-grow: 1;
+      margin: 0;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+    }
+
+    .unit-logo { width: 80px; height: 80px; object-fit: contain; }
+
+    /* Columns */
+    .col { border-right: 1px solid var(--border-color); padding: 15px; }
+    .col:last-child { border-right: none; }
+
+    /* Sections */
+    .section-box {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .section-title {
+      font-weight: bold;
+      text-decoration: underline;
+      display: block;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    /* Map Area */
+    .map-container {
+      background: #e5e7eb;
+      position: relative;
+      height: 400px;
+      border-bottom: 2px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .map-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-upload-label {
+      position: absolute;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      display: none; /* Hidden by default */
+    }
+
+    /* Editable State */
+    [contenteditable="true"] {
+      background-color: #fff9c4;
+      padding: 2px;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    [contenteditable="true"]:hover { background-color: #fff176; }
+
+    .editing .image-upload-label { display: block; }
+    
+    .timeline-table { width: 100%; font-size: 0.9rem; }
+    .timeline-table td { padding: 2px 0; }
+
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <div><strong>MODE:</strong> <span id="mode-text">Presentation</span></div>
+    <button class="edit-toggle" onclick="toggleEdit()">Toggle Edit Mode</button>
+  </div>
+
+  <div class="conop-slide" id="slide-content">
+    
+    <header class="slide-header">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/US_Army_Insignia.svg" class="unit-logo" alt="Logo Left">
+      <h1 contenteditable="false">Charlie Co ACFT 20MAR26</h1>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/App_icon_of_United_States_Army.svg" class="unit-logo" alt="Logo Right">
+    </header>
+
+    <aside class="col">
+      <div class="section-box">
+        <span class="section-title">Mission Statement</span>
+        <div class="editable-content" contenteditable="false">
+          Charlie Company will conduct the ACFT on 20MAR26 at Ft. Lee, VA IOT familiarize the cadets with the new Army standard PT test.
+        </div>
+      </div>
+
+      <div class="section-box">
+        <span class="section-title">Commander's Intent</span>
+        <div class="editable-content" contenteditable="false">
+          Cadets will learn how to conduct the ACFT.
+        </div>
+      </div>
+
+      <div class="section-box">
+        <span class="section-title">End State</span>
+        <div class="editable-content" contenteditable="false">
+          Cadets will know how to properly administer the ACFT and conduct new events.
+        </div>
+      </div>
+
+      <div class="section-box">
+        <span class="section-title">Key Tasks</span>
+        <ul class="editable-content" contenteditable="false">
+          <li>Safely travel to & from Ft. Lee</li>
+          <li>Properly conduct the ACFT</li>
+          <li>Understand branch standards</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="col" style="padding:0; grid-column: span 1;">
+      <div class="map-container">
+        <img src="https://via.placeholder.com/600x400?text=Click+Edit+Mode+to+Upload+Map" id="main-map" class="map-image">
+        <label for="map-upload" class="image-upload-label">Upload New Map/Image</label>
+        <input type="file" id="map-upload" style="display:none" accept="image/*" onchange="loadMap(event)">
+      </div>
+      
+      <div style="padding:15px;">
+        <span class="section-title">Timeline</span>
+        <div class="editable-content" contenteditable="false">
+          <table class="timeline-table">
+            <tr><td>0230-</td><td>FF at Longwood ROTC office</td></tr>
+            <tr><td>0300-</td><td>SP from Longwood ROTC office</td></tr>
+            <tr><td>0430-</td><td>Arrive at Ft. Lee / Begin ACFT</td></tr>
+            <tr><td>0730-</td><td>Complete ACFT & Accountability</td></tr>
+            <tr><td>0905-</td><td>Accountability & Dismissal</td></tr>
+          </table>
+        </div>
+        
+        <div style="margin-top:20px;">
+          <p><strong>UNIFORM:</strong> <span class="editable-content" contenteditable="false">Winter APFU, water source.</span></p>
+          <p><strong>WEATHER:</strong> <span class="editable-content" contenteditable="false">High 55F / Low 38F</span></p>
+        </div>
+      </div>
+    </main>
+
+    <aside class="col">
+      <div class="section-box">
+        <span class="section-title">Concept of Operations</span>
+        <div class="editable-content" contenteditable="false">
+          <strong>Phase I:</strong> First Formation<br>
+          <strong>Phase II:</strong> Travel to Ft. Lee<br>
+          <strong>Phase III:</strong> Conduct ACFT<br>
+          <strong>Phase IV:</strong> Travel back to Longwood<br>
+          <strong>Phase V:</strong> Accountability & Dismissal
+        </div>
+      </div>
+
+      <div class="section-box">
+        <div class="editable-content" contenteditable="false" style="font-size: 0.85rem;">
+          Phase II begins with SP from Longwood @0300 and ends with arrival at Ft. Lee. Phase III concludes with ACFT completion and final accountability.
+        </div>
+      </div>
+
+      <div class="section-box" style="margin-top: 50px;">
+        <span class="section-title">Key Personnel</span>
+        <div class="editable-content" contenteditable="false">
+          c/OIC: CDT Cate<br>
+          c/AOIC: CDT Ramsey
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    let isEditing = false;
+
+    function toggleEdit() {
+      isEditing = !isEditing;
+      const slide = document.getElementById('slide-content');
+      const modeText = document.getElementById('mode-text');
+      const editables = document.querySelectorAll('[contenteditable]');
+      const header = document.querySelector('h1');
+
+      if (isEditing) {
+        slide.classList.add('editing');
+        modeText.innerText = "Edit Mode (Yellow areas are clickable)";
+        editables.forEach(el => el.contentEditable = "true");
+        header.contentEditable = "true";
+      } else {
+        slide.classList.remove('editing');
+        modeText.innerText = "Presentation";
+        editables.forEach(el => el.contentEditable = "false");
+        header.contentEditable = "false";
+      }
+    }
+
+    function loadMap(event) {
+      const output = document.getElementById('main-map');
+      output.src = URL.createObjectURL(event.target.files[0]);
+      output.onload = function() {
+        URL.revokeObjectURL(output.src) // free memory
+      }
+    }
+  </script>
+</body>
+</html>
