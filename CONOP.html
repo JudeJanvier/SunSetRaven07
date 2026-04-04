@@ -106,10 +106,24 @@ button{background:#111827;border:1px solid var(--border);color:white;padding:6px
 
 <div class="center">
 
-<div class="map" onclick="triggerUpload(this)">
-<span>CLICK TO UPLOAD MAP</span>
-<img class="img">
-<input type="file" hidden onchange="uploadImg(event,this)">
+<div class="map">
+  <div style="position:absolute;top:6px;left:6px;z-index:3;display:flex;gap:6px;">
+    <button onclick="triggerUpload(this.closest('.map'))">Upload Image</button>
+    <button onclick="toggleMapMode(this.closest('.map'),'iframe')">Google Map</button>
+    <button onclick="toggleMapMode(this.closest('.map'),'image')">Image Mode</button>
+  </div>
+  <div class="map-layer image-layer" style="position:absolute;inset:0;display:block;">
+    <span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--accent);">CLICK "Upload Image"</span>
+    <img class="img">
+    <input type="file" hidden onchange="uploadImg(event,this)">
+  </div>
+  <div class="map-layer iframe-layer" style="position:absolute;inset:0;display:none;">
+    <iframe class="map-iframe" src="" style="width:100%;height:100%;border:0;"></iframe>
+    <div style="position:absolute;top:40px;left:6px;z-index:3;background:#0008;padding:6px;border:1px solid var(--border);">
+      <input type="text" placeholder="Paste Google Maps embed URL" class="map-url" style="width:260px;">
+      <button onclick="setMapUrl(this.closest('.map'))">Load</button>
+    </div>
+  </div>
 </div>
 
 <div class="timeline">
@@ -236,8 +250,39 @@ document.querySelectorAll('.editable').forEach(e=>e.contentEditable=edit)
 }
 
 function triggerUpload(mapEl){
-const input=mapEl.querySelector('input')
-input.click()
+  // ensure image mode is visible
+  toggleMapMode(mapEl,'image')
+  const input=mapEl.querySelector('.image-layer input')
+  input.click()
+}
+
+function toggleMapMode(mapEl,mode){
+  const imgLayer = mapEl.querySelector('.image-layer')
+  const iframeLayer = mapEl.querySelector('.iframe-layer')
+  if(mode==='iframe'){
+    imgLayer.style.display='none'
+    iframeLayer.style.display='block'
+  }else{
+    imgLayer.style.display='block'
+    iframeLayer.style.display='none'
+  }
+}
+
+function setMapUrl(mapEl){
+  const url = mapEl.querySelector('.map-url').value.trim()
+  if(!url) return
+  // accept Google Maps embed or regular link; try to convert regular link to embed
+  let src = url
+  if(!url.includes('embed')){
+    try{
+      const u = new URL(url)
+      // simple conversion for place links
+      if(u.hostname.includes('google.')){
+        src = 'https://www.google.com/maps?q='+encodeURIComponent(url)+'&output=embed'
+      }
+    }catch(e){}
+  }
+  mapEl.querySelector('.map-iframe').src = src
 }
 
 function uploadImg(e,input){
