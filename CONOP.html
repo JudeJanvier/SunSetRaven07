@@ -33,14 +33,19 @@ body{margin:0;font-family:Segoe UI, monospace;background:var(--bg);color:var(--t
   border:1px solid var(--border);
   background:var(--card);
   padding:10px;
+  cursor:grab;
 }
+.section.dragging{opacity:0.5}
 .section-title{
   color:var(--accent);
   font-size:0.8rem;
   border-bottom:1px solid var(--border);
   margin-bottom:6px;
   padding-bottom:4px;
+  display:flex;justify-content:space-between;align-items:center;
 }
+
+.delete-btn{color:red;cursor:pointer;font-weight:bold}
 
 .box{
   background:#1a2230;
@@ -49,7 +54,6 @@ body{margin:0;font-family:Segoe UI, monospace;background:var(--bg);color:var(--t
 }
 
 .left,.right{display:flex;flex-direction:column;gap:10px}
-
 .center{display:flex;flex-direction:column;gap:10px}
 
 .map{
@@ -59,6 +63,7 @@ body{margin:0;font-family:Segoe UI, monospace;background:var(--bg);color:var(--t
   align-items:center;
   justify-content:center;
   position:relative;
+  cursor:pointer;
 }
 .map img{width:100%;height:100%;object-fit:contain}
 
@@ -69,9 +74,7 @@ body{margin:0;font-family:Segoe UI, monospace;background:var(--bg);color:var(--t
 }
 
 button{background:#111827;border:1px solid var(--border);color:white;padding:6px 10px;cursor:pointer}
-
 .editing [contenteditable="true"]{outline:1px dashed var(--accent)}
-
 </style>
 </head>
 
@@ -99,42 +102,19 @@ button{background:#111827;border:1px solid var(--border);color:white;padding:6px
 
 <div class="left">
 
-<div class="section">
-<div class="section-title">MISSION STATEMENT</div>
-<div class="box editable" contenteditable="false">Type mission...</div>
-</div>
-
-<div class="section">
-<div class="section-title">COMMANDER'S INTENT</div>
-<div class="box editable" contenteditable="false">Type intent...</div>
-</div>
-
-<div class="section">
-<div class="section-title">KEY TASKS</div>
-<div class="box editable" contenteditable="false">
-• Task 1<br>• Task 2
-</div>
-</div>
-
-<button onclick="addCustomSection(this)">+ Add Section</button>
-
 </div>
 
 <div class="center">
 
-<div class="map" onclick="upload.click()">
+<div class="map" onclick="triggerUpload(this)">
 <span>CLICK TO UPLOAD MAP</span>
 <img class="img">
-<input type="file" id="upload" hidden onchange="uploadImg(event,this)">
+<input type="file" hidden onchange="uploadImg(event,this)">
 </div>
 
 <div class="timeline">
 <div class="section-title">OPERATIONAL TIMELINE</div>
-<div class="timeline-list editable" contenteditable="false">
-0230 First Formation<br>
-0300 SP<br>
-0430 Start
-</div>
+<div class="timeline-list editable" contenteditable="false"></div>
 <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
 <input type="time" class="time-input">
 <input type="text" class="task-input" placeholder="Task">
@@ -146,31 +126,6 @@ button{background:#111827;border:1px solid var(--border);color:white;padding:6px
 
 <div class="right">
 
-<div class="section">
-<div class="section-title">CONCEPT OF OPERATIONS</div>
-<div class="box editable" contenteditable="false">
-Phase I<br>Phase II
-</div>
-</div>
-
-<div class="section">
-<div class="section-title">UNIFORM / WEATHER</div>
-<div class="box editable" contenteditable="false">
-OCP<br>Temp info
-</div>
-</div>
-
-<div class="section">
-<div class="section-title">KEY PERSONNEL</div>
-<div class="box editable" contenteditable="false">
-NCOIC / OIC
-</div>
-</div>
-
-<button onclick="addRightSection(this)">+ Add Section</button>
-
-</div>
-
 </div>
 
 </div>
@@ -179,6 +134,52 @@ NCOIC / OIC
 <script>
 let count=0
 let edit=false
+let dragSrc=null
+
+function createSection(title="NEW SECTION", content="Type..."){
+  const section=document.createElement('div')
+  section.className='section'
+  section.draggable=true
+
+  section.innerHTML=`
+  <div class="section-title" contenteditable="true">${title}<span class="delete-btn" onclick="deleteSection(this)">×</span></div>
+  <div class="box editable" contenteditable="false">${content}</div>
+  `
+
+  section.addEventListener('dragstart',()=>{
+    dragSrc=section
+    section.classList.add('dragging')
+  })
+
+  section.addEventListener('dragend',()=>{
+    section.classList.remove('dragging')
+  })
+
+  section.addEventListener('dragover',(e)=>{
+    e.preventDefault()
+    const container=section.parentElement
+    const after=getDragAfterElement(container,e.clientY)
+    if(after==null) container.appendChild(dragSrc)
+    else container.insertBefore(dragSrc,after)
+  })
+
+  return section
+}
+
+function getDragAfterElement(container,y){
+  const elements=[...container.querySelectorAll('.section:not(.dragging)')]
+  return elements.reduce((closest,child)=>{
+    const box=child.getBoundingClientRect()
+    const offset=y-box.top-box.height/2
+    if(offset<0 && offset>closest.offset){
+      return {offset:offset,element:child}
+    }else return closest
+  },{offset:Number.NEGATIVE_INFINITY}).element
+}
+
+function deleteSection(btn){
+  btn.closest('.section').remove()
+}
 
 function addMission(name="Mission"){
 count++
@@ -194,6 +195,26 @@ document.getElementById('tabs').appendChild(tab)
 let temp=document.getElementById('template').content.cloneNode(true)
 let slide=temp.querySelector('.slide')
 slide.id=id
+
+// default sections
+let left=slide.querySelector('.left')
+left.appendChild(createSection("MISSION STATEMENT","Type mission..."))
+left.appendChild(createSection("COMMANDER'S INTENT","Type intent..."))
+
+let right=slide.querySelector('.right')
+right.appendChild(createSection("CONCEPT OF OPERATIONS","Phase I"))
+
+// add buttons
+let addLeftBtn=document.createElement('button')
+addLeftBtn.innerText='+ Add Section'
+addLeftBtn.onclick=()=>left.appendChild(createSection())
+left.appendChild(addLeftBtn)
+
+let addRightBtn=document.createElement('button')
+addRightBtn.innerText='+ Add Section'
+addRightBtn.onclick=()=>right.appendChild(createSection())
+right.appendChild(addRightBtn)
+
 
 document.getElementById('slides').appendChild(slide)
 
@@ -214,43 +235,21 @@ edit=!edit
 document.querySelectorAll('.editable').forEach(e=>e.contentEditable=edit)
 }
 
+function triggerUpload(mapEl){
+const input=mapEl.querySelector('input')
+input.click()
+}
+
 function uploadImg(e,input){
 let file=e.target.files[0]
+if(!file) return
 let reader=new FileReader()
 reader.onload=r=>{
-input.previousElementSibling.src=r.target.result
+input.closest('.map').querySelector('.img').src=r.target.result
 }
 reader.readAsDataURL(file)
 }
 
-function addCustomSection(btn){
-const container=btn.parentElement
-
-const section=document.createElement('div')
-section.className='section'
-section.innerHTML=`
-<div class="section-title" contenteditable="true">NEW SECTION</div>
-<div class="box editable" contenteditable="true">Type...</div>
-`
-
-container.insertBefore(section,btn)
-}
-
-// 🔥 RIGHT SIDE SECTION ADDER
-function addRightSection(btn){
-const container=btn.parentElement
-
-const section=document.createElement('div')
-section.className='section'
-section.innerHTML=`
-<div class="section-title" contenteditable="true">NEW SECTION</div>
-<div class="box editable" contenteditable="true">Type...</div>
-`
-
-container.insertBefore(section,btn)
-}
-
-// 🔥 TIMELINE BUILDER
 function addTimelineItem(btn){
 const container = btn.closest('.timeline')
 const time = container.querySelector('.time-input').value
@@ -259,13 +258,9 @@ const task = container.querySelector('.task-input').value
 if(!time || !task) return
 
 const list = container.querySelector('.timeline-list')
-
-let items = list.innerHTML.split('<br>').filter(i=>i.trim()!=="")
+let items = list.innerHTML.split('<br>').filter(i=>i.trim()!="")
 items.push(`${time} ${task}`)
-
-// SORT
 items.sort((a,b)=>a.localeCompare(b))
-
 list.innerHTML = items.join('<br>')
 
 container.querySelector('.time-input').value=""
