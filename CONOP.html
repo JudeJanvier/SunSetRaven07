@@ -3,39 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TOC | MISSION BUILDER PRO</title>
+<title>TOC | CONOP DASHBOARD</title>
 
 <style>
 :root {
---bg:#0a0c0e;--panel:#161b22;--border:#30363d;--accent:#d4af37;--army-green:#4b5320;--text:#c9d1d9;--danger:#f85149;
+  --bg:#0a0c0e;
+  --panel:#111827;
+  --card:#0f1720;
+  --border:#2b3440;
+  --accent:#d4af37;
+  --text:#c9d1d9;
 }
 
-body{margin:0;font-family:"Segoe UI","Courier New",monospace;background:var(--bg);color:var(--text);display:grid;grid-template-columns:300px 1fr;height:100vh}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI, monospace;background:var(--bg);color:var(--text);display:grid;grid-template-columns:280px 1fr;height:100vh}
 
-.sidebar{background:var(--panel);border-right:2px solid var(--border);padding:20px;display:flex;flex-direction:column}
-.tab-list{flex-grow:1;overflow:auto}
-.mission-tab{border:1px solid var(--border);padding:10px;margin-bottom:5px;cursor:pointer;display:flex;gap:5px;align-items:center}
+.sidebar{background:#0f172a;border-right:2px solid var(--border);padding:15px}
+.mission-tab{border:1px solid var(--border);padding:10px;margin-bottom:6px;cursor:pointer}
 .mission-tab.active{border-color:var(--accent);background:rgba(212,175,55,0.1)}
 
-.status-dot{width:10px;height:10px;border-radius:50%}
-.green{background:#16a34a}
-.amber{background:#f59e0b}
-.red{background:#dc2626}
+.main{padding:15px;overflow:auto}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.title{font-size:1.6rem;border:1px solid var(--accent);padding:6px 15px}
 
-.main{padding:20px;overflow:auto}
-.header{display:flex;justify-content:space-between;margin-bottom:10px}
-.banner{background:var(--danger);padding:5px 15px}
-
-.unit-box{margin-bottom:10px;border:1px solid var(--border);padding:10px}
-
-.slide{display:none;background:black;border:2px solid var(--border);grid-template-columns:28% 44% 28%;min-height:800px}
+.slide{display:none;grid-template-columns:25% 50% 25%;gap:12px}
 .slide.active{display:grid}
 
-.col{border-right:1px solid var(--border);padding:10px}
-.col:last-child{border-right:none}
+.section{
+  border:1px solid var(--border);
+  background:var(--card);
+  padding:10px;
+}
+.section-title{
+  color:var(--accent);
+  font-size:0.8rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:6px;
+  padding-bottom:4px;
+}
 
-.map{height:350px;background:#111;display:flex;justify-content:center;align-items:center;position:relative}
+.box{
+  background:#1a2230;
+  border:1px solid var(--accent);
+  padding:8px;
+}
+
+.left,.right{display:flex;flex-direction:column;gap:10px}
+
+.center{display:flex;flex-direction:column;gap:10px}
+
+.map{
+  height:300px;
+  border:2px dashed var(--accent);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
 .map img{width:100%;height:100%;object-fit:contain}
+
+.timeline{
+  border:1px solid var(--border);
+  padding:10px;
+  background:#0d1117;
+}
+
+button{background:#111827;border:1px solid var(--border);color:white;padding:6px 10px;cursor:pointer}
 
 .editing [contenteditable="true"]{outline:1px dashed var(--accent)}
 
@@ -45,63 +78,103 @@ body{margin:0;font-family:"Segoe UI","Courier New",monospace;background:var(--bg
 <body>
 
 <div class="sidebar">
-<div id="tabs" class="tab-list"></div>
-<button onclick="addMission()">+ Add Mission</button>
-<button onclick="exportPDF()">Export PDF</button>
+  <div id="tabs"></div>
+  <button onclick="addMission()">+ Add Mission</button>
 </div>
 
 <div class="main">
-<div class="header">
-<div class="banner">FOUO</div>
-<div>
-<button onclick="toggleEdit()">Edit</button>
-<button onclick="toggleFullscreen()">Brief</button>
-</div>
-</div>
+  <div class="header">
+    <div>LOGO</div>
+    <div class="title" contenteditable="true">CONOP TITLE</div>
+    <div>DTG / LOCATION</div>
+  </div>
 
-<!-- UNIT TRACKING -->
-<div class="unit-box" contenteditable="true">
-<strong>Unit Status:</strong><br>
-Personnel: 120 / 140<br>
-Vehicles FMC: 85%<br>
-Weapons: 100%
-</div>
+  <button onclick="toggleEdit()">Edit Mode</button>
 
-<div id="slides"></div>
+  <div id="slides"></div>
 </div>
 
 <template id="template">
 <div class="slide">
 
-<div class="col">
-<div contenteditable="false" class="editable">Mission</div>
-<div contenteditable="false" class="editable">Intent</div>
+<div class="left">
+
+<div class="section">
+<div class="section-title">MISSION STATEMENT</div>
+<div class="box editable" contenteditable="false">Type mission...</div>
 </div>
 
-<div class="col">
-<div class="map">
-<img src="https://via.placeholder.com/800x400" class="img">
-<input type="file" onchange="uploadImg(event,this)">
+<div class="section">
+<div class="section-title">COMMANDER'S INTENT</div>
+<div class="box editable" contenteditable="false">Type intent...</div>
 </div>
 
-<!-- TIMELINE BUILDER -->
-<div>
-<input type="time" id="time">
-<input type="text" id="task">
-<button onclick="addTimeline(this)">Add</button>
-<ul class="timeline"></ul>
+<div class="section">
+<div class="section-title">KEY TASKS</div>
+<div class="box editable" contenteditable="false">
+• Task 1<br>• Task 2
+</div>
+</div>
+
+<button onclick="addCustomSection(this)">+ Add Section</button>
+
+</div>
+
+<div class="center">
+
+<div class="map" onclick="upload.click()">
+<span>CLICK TO UPLOAD MAP</span>
+<img class="img">
+<input type="file" id="upload" hidden onchange="uploadImg(event,this)">
+</div>
+
+<div class="timeline">
+<div class="section-title">OPERATIONAL TIMELINE</div>
+<div class="timeline-list editable" contenteditable="false">
+0230 First Formation<br>
+0300 SP<br>
+0430 Start
+</div>
+<div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
+<input type="time" class="time-input">
+<input type="text" class="task-input" placeholder="Task">
+<button onclick="addTimelineItem(this)">Add</button>
+</div>
 </div>
 
 </div>
 
-<div class="col">
-<div contenteditable="false" class="editable">CONOP</div>
+<div class="right">
+
+<div class="section">
+<div class="section-title">CONCEPT OF OPERATIONS</div>
+<div class="box editable" contenteditable="false">
+Phase I<br>Phase II
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">UNIFORM / WEATHER</div>
+<div class="box editable" contenteditable="false">
+OCP<br>Temp info
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">KEY PERSONNEL</div>
+<div class="box editable" contenteditable="false">
+NCOIC / OIC
+</div>
+</div>
+
+<button onclick="addRightSection(this)">+ Add Section</button>
+
+</div>
+
 </div>
 
 </div>
 </template>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
 let count=0
@@ -113,22 +186,9 @@ let id="m"+count
 
 let tab=document.createElement('div')
 tab.className='mission-tab'
-
-let text=document.createElement('span')
-text.innerText=name
-text.contentEditable=true
-
-let status=document.createElement('div')
-status.className='status-dot green'
-status.onclick=()=>{
-status.className=status.classList.contains('green')?'status-dot amber':status.classList.contains('amber')?'status-dot red':'status-dot green'
-}
-
-tab.appendChild(text)
-tab.appendChild(status)
+tab.innerText=name
 
 tab.onclick=()=>switchMission(id,tab)
-
 document.getElementById('tabs').appendChild(tab)
 
 let temp=document.getElementById('template').content.cloneNode(true)
@@ -154,10 +214,6 @@ edit=!edit
 document.querySelectorAll('.editable').forEach(e=>e.contentEditable=edit)
 }
 
-function toggleFullscreen(){
-document.body.classList.toggle('fullscreen')
-}
-
 function uploadImg(e,input){
 let file=e.target.files[0]
 let reader=new FileReader()
@@ -167,35 +223,58 @@ input.previousElementSibling.src=r.target.result
 reader.readAsDataURL(file)
 }
 
-// TIMELINE SORT
-function addTimeline(btn){
-let container=btn.parentElement
-let time=container.querySelector('#time').value
-let task=container.querySelector('#task').value
+function addCustomSection(btn){
+const container=btn.parentElement
 
-let li=document.createElement('li')
-li.dataset.time=time
-li.innerText=time+" - "+task
+const section=document.createElement('div')
+section.className='section'
+section.innerHTML=`
+<div class="section-title" contenteditable="true">NEW SECTION</div>
+<div class="box editable" contenteditable="true">Type...</div>
+`
 
-let ul=container.querySelector('.timeline')
-ul.appendChild(li)
-
-// SORT
-let items=[...ul.children]
-items.sort((a,b)=>a.dataset.time.localeCompare(b.dataset.time))
-ul.innerHTML=''
-items.forEach(i=>ul.appendChild(i))
+container.insertBefore(section,btn)
 }
 
-// PDF EXPORT
-function exportPDF(){
-let element=document.querySelector('.slide.active')
-html2pdf().from(element).save("CONOP.pdf")
+// 🔥 RIGHT SIDE SECTION ADDER
+function addRightSection(btn){
+const container=btn.parentElement
+
+const section=document.createElement('div')
+section.className='section'
+section.innerHTML=`
+<div class="section-title" contenteditable="true">NEW SECTION</div>
+<div class="box editable" contenteditable="true">Type...</div>
+`
+
+container.insertBefore(section,btn)
+}
+
+// 🔥 TIMELINE BUILDER
+function addTimelineItem(btn){
+const container = btn.closest('.timeline')
+const time = container.querySelector('.time-input').value
+const task = container.querySelector('.task-input').value
+
+if(!time || !task) return
+
+const list = container.querySelector('.timeline-list')
+
+let items = list.innerHTML.split('<br>').filter(i=>i.trim()!=="")
+items.push(`${time} ${task}`)
+
+// SORT
+items.sort((a,b)=>a.localeCompare(b))
+
+list.innerHTML = items.join('<br>')
+
+container.querySelector('.time-input').value=""
+container.querySelector('.task-input').value=""
 }
 
 window.onload=()=>{
-addMission("EPFA")
-addMission("AFT")
+addMission('EPFA')
+addMission('AFT')
 }
 </script>
 
