@@ -37,6 +37,63 @@ body {
   height: 100vh;
 }
 
+/* ── PRINT STYLES ── */
+@media print {
+  @page { size: landscape; margin: 0.5in; }
+  
+  body { 
+    background: white !important; 
+    color: black !important; 
+    display: block !important; 
+    height: auto !important;
+  }
+  
+  .top-strip, .header-right, .sidebar, .tab-bar, .tl-form, #edit-btn, .btn, .pulse-dot { 
+    display: none !important; 
+  }
+  
+  .header {
+    background: white !important;
+    border-bottom: 2px solid black !important;
+    color: black !important;
+    min-height: auto !important;
+    padding: 0 !important;
+  }
+  
+  .header-title h1, .op-name, .header-title .subtitle, .unit-crest span {
+    color: black !important;
+  }
+
+  .unit-crest { border: 1px solid black !important; background: #eee !important; }
+
+  .workspace { display: block !important; }
+  .main { overflow: visible !important; }
+  .slides-wrap { background: white !important; padding: 0 !important; overflow: visible !important; }
+  
+  .slide { display: block !important; page-break-after: always; }
+  .conop-grid { grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+  
+  .info-block, .detail-card, .timeline-wrap, .map-panel {
+    background: white !important;
+    border: 1px solid black !important;
+    color: black !important;
+  }
+  
+  .panel-header, .info-block-label, .detail-card-header {
+    background: #f0f0f0 !important;
+    color: black !important;
+    border-bottom: 1px solid black !important;
+  }
+  
+  .tl-time { color: black !important; font-weight: bold; }
+  .tl-item { border-bottom: 1px solid #ccc !important; }
+  .map-body { height: 250px !important; border: 1px solid black !important; }
+  .map-grid-overlay { display: none !important; }
+  
+  .schedule-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
+  .sched-day { min-height: auto !important; border: 1px solid black !important; margin-bottom: 10px; }
+}
+
 /* ── TOP STRIP ── */
 .top-strip {
   background: var(--danger);
@@ -60,659 +117,146 @@ body {
   min-height: 72px;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 0;
-}
+.header-left { display: flex; align-items: center; gap: 16px; padding: 12px 0; }
 
 .unit-crest {
-  width: 48px;
-  height: 48px;
-  background: var(--gold);
+  width: 48px; height: 48px; background: var(--gold);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 
 .unit-crest span {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: var(--black);
-  text-align: center;
-  line-height: 1.1;
+  font-family: 'Oswald', sans-serif; font-size: 0.6rem; font-weight: 700;
+  color: var(--black); text-align: center; line-height: 1.1;
 }
 
-.header-title {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+.header-title { display: flex; flex-direction: column; gap: 2px; }
 
 .header-title h1 {
-  font-family: 'Oswald', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 2px;
-  line-height: 1;
-  text-transform: uppercase;
+  font-family: 'Oswald', sans-serif; font-size: 1.6rem; font-weight: 700;
+  color: var(--white); letter-spacing: 2px; line-height: 1; text-transform: uppercase;
 }
 
-.header-title .subtitle {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.7rem;
-  color: var(--gold);
-  letter-spacing: 1px;
-}
+.header-title .subtitle { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--gold); letter-spacing: 1px; }
 
 .header-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
 
 .op-name {
-  font-family: 'Oswald', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--gold);
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 600;
+  color: var(--gold); letter-spacing: 4px; text-transform: uppercase;
 }
 
-.dtg-bar {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--muted);
-  display: flex;
-  gap: 16px;
-}
-
+.dtg-bar { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--muted); display: flex; gap: 16px; }
 .dtg-bar span { color: var(--text); }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 0;
-}
+.header-right { display: flex; align-items: center; gap: 8px; padding: 12px 0; }
 
-.sys-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.65rem;
-  color: var(--muted);
-}
+.sys-status { display: flex; align-items: center; gap: 6px; font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--muted); }
 
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--success);
-  animation: blink 2s ease-in-out infinite;
-}
-
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: blink 2s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 .btn {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 1px;
-  padding: 7px 16px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.15s;
+  font-family: 'Oswald', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 1px;
+  padding: 7px 16px; border: 1px solid var(--border); background: transparent;
+  color: var(--text); cursor: pointer; text-transform: uppercase; transition: all 0.15s;
 }
 
 .btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(200,168,75,0.07); }
 .btn-gold { border-color: var(--gold); color: var(--gold); }
-.btn-gold:hover { background: rgba(200,168,75,0.15); }
-.btn-green { border-color: var(--success); color: var(--success); }
-.btn-green:hover { background: rgba(39,174,96,0.1); }
-.btn-active { border-color: var(--success); color: var(--success); background: rgba(39,174,96,0.08); }
 
 /* ── LAYOUT ── */
-.workspace {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  overflow: hidden;
-  height: 100%;
-}
+.workspace { display: grid; grid-template-columns: 200px 1fr; overflow: hidden; height: 100%; }
 
-/* ── SIDEBAR ── */
-.sidebar {
-  background: var(--dark);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
+.sidebar { background: var(--dark); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-section { padding: 12px; border-bottom: 1px solid var(--border); }
+.sidebar-label { font-family: 'Oswald', sans-serif; font-size: 0.62rem; font-weight: 600; color: var(--gold-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.sidebar-label::before { content: ''; display: inline-block; width: 12px; height: 2px; background: var(--gold-dim); }
 
-.sidebar-section {
-  padding: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sidebar-label {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.62rem;
-  font-weight: 600;
-  color: var(--gold-dim);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.sidebar-label::before {
-  content: '';
-  display: inline-block;
-  width: 12px;
-  height: 2px;
-  background: var(--gold-dim);
-}
-
-.mission-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
-}
-
-.mission-list::-webkit-scrollbar { width: 3px; }
-.mission-list::-webkit-scrollbar-thumb { background: var(--border); }
-
-.mission-item {
-  padding: 9px 10px;
-  cursor: pointer;
-  border: 1px solid transparent;
-  border-left: 3px solid transparent;
-  margin-bottom: 3px;
-  transition: all 0.12s;
-  position: relative;
-}
-
-.mission-item:hover {
-  background: rgba(200,168,75,0.06);
-  border-color: var(--border);
-  border-left-color: var(--gold-dim);
-}
-
-.mission-item.active {
-  background: rgba(200,168,75,0.1);
-  border-color: rgba(200,168,75,0.3);
-  border-left-color: var(--gold);
-}
-
-.mission-item-name {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
+.mission-list { flex: 1; overflow-y: auto; padding: 8px; }
+.mission-item { padding: 9px 10px; cursor: pointer; border: 1px solid transparent; border-left: 3px solid transparent; margin-bottom: 3px; transition: all 0.12s; position: relative; }
+.mission-item:hover { background: rgba(200,168,75,0.06); border-color: var(--border); border-left-color: var(--gold-dim); }
+.mission-item.active { background: rgba(200,168,75,0.1); border-color: rgba(200,168,75,0.3); border-left-color: var(--gold); }
+.mission-item-name { font-family: 'Oswald', sans-serif; font-size: 0.82rem; font-weight: 500; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
 .mission-item.active .mission-item-name { color: var(--gold); }
-
-.mission-item-meta {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--muted);
-  margin-top: 2px;
-}
-
-.sidebar-footer {
-  padding: 10px;
-  border-top: 1px solid var(--border);
-}
+.mission-item-meta { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--muted); margin-top: 2px; }
 
 /* ── MAIN CONTENT ── */
-.main {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* TAB BAR */
-.tab-bar {
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  gap: 4px;
-  flex-shrink: 0;
-  height: 40px;
-}
-
-.view-tab {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 1px;
-  padding: 0 14px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  color: var(--muted);
-  transition: all 0.12s;
-  text-transform: uppercase;
-  background: none;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-}
-
-.view-tab:hover { color: var(--text); }
+.main { display: flex; flex-direction: column; overflow: hidden; }
+.tab-bar { background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 16px; gap: 4px; flex-shrink: 0; height: 40px; }
+.view-tab { font-family: 'Oswald', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 1px; padding: 0 14px; height: 40px; display: flex; align-items: center; cursor: pointer; border-bottom: 3px solid transparent; color: var(--muted); transition: all 0.12s; text-transform: uppercase; background: none; border: none; }
 .view-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
-
 .tab-spacer { flex: 1; }
 
-/* SLIDE CONTAINER */
-.slides-wrap {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px;
-  background: var(--black);
-}
-
-.slides-wrap::-webkit-scrollbar { width: 6px; }
-.slides-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
+.slides-wrap { flex: 1; overflow-y: auto; padding: 16px; background: var(--black); }
 .slide { display: none; }
 .slide.active { display: block; }
 
-/* ── CONOP SLIDE LAYOUT ── */
-.conop-grid {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 14px;
-}
-
+.conop-grid { display: grid; grid-template-columns: 1fr 340px; gap: 14px; }
 .conop-left { display: flex; flex-direction: column; gap: 14px; }
 .conop-right { display: flex; flex-direction: column; gap: 14px; }
 
-/* ── MAP PANEL ── */
-.map-panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.panel-header {
-  background: var(--olive);
-  padding: 7px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.panel-header-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--white);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.map-body {
-  height: 320px;
-  background: #0c1015;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
+.map-panel { background: var(--panel); border: 1px solid var(--border); flex-shrink: 0; }
+.panel-header { background: var(--olive); padding: 7px 14px; display: flex; align-items: center; justify-content: space-between; }
+.panel-header-title { font-family: 'Oswald', sans-serif; font-size: 0.75rem; font-weight: 600; color: var(--white); text-transform: uppercase; letter-spacing: 2px; }
+.map-body { height: 320px; background: #0c1015; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
 .map-body img { width: 100%; height: 100%; object-fit: contain; }
+.map-placeholder { text-align: center; color: var(--muted); }
+.map-placeholder .icon { font-size: 36px; display: block; margin-bottom: 10px; opacity: 0.4; }
+.map-placeholder p { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 2px; opacity: 0.5; }
 
-.map-placeholder {
-  text-align: center;
-  color: var(--muted);
-}
+.info-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.info-block { background: var(--panel); border: 1px solid var(--border); border-top: 2px solid var(--olive); padding: 12px 14px; }
+.info-block-label { font-family: 'Oswald', sans-serif; font-size: 0.68rem; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.info-block-content { font-size: 0.82rem; line-height: 1.65; color: var(--text); white-space: pre-wrap; min-height: 32px; }
 
-.map-placeholder .icon {
-  font-size: 36px;
-  display: block;
-  margin-bottom: 10px;
-  opacity: 0.4;
-}
+.detail-card { background: var(--panel); border: 1px solid var(--border); }
+.detail-card-header { padding: 7px 14px; background: rgba(200,168,75,0.08); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.detail-card-title { font-family: 'Oswald', sans-serif; font-size: 0.7rem; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; }
+.detail-card-body { padding: 12px 14px; font-size: 0.82rem; line-height: 1.65; color: var(--text); white-space: pre-wrap; min-height: 32px; }
 
-.map-placeholder p {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 2px;
-  opacity: 0.5;
-}
-
-.map-grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(200,168,75,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200,168,75,0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-
-/* ── INFO BLOCKS ── */
-.info-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.info-block {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--olive);
-  padding: 12px 14px;
-}
-
-.info-block.gold-top { border-top-color: var(--gold); }
-.info-block.danger-top { border-top-color: var(--danger); }
-
-.info-block-label {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--gold);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-
-.info-block-content {
-  font-size: 0.82rem;
-  line-height: 1.65;
-  color: var(--text);
-  white-space: pre-wrap;
-  min-height: 32px;
-}
-
-/* ── RIGHT COLUMN CARDS ── */
-.detail-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-}
-
-.detail-card-header {
-  padding: 7px 14px;
-  background: rgba(200,168,75,0.08);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.detail-card-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--gold);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.detail-card-body {
-  padding: 12px 14px;
-  font-size: 0.82rem;
-  line-height: 1.65;
-  color: var(--text);
-  white-space: pre-wrap;
-  min-height: 32px;
-}
-
-/* ── TIMELINE ── */
-.timeline-wrap {
-  background: var(--panel);
-  border: 1px solid var(--border);
-}
-
-.tl-item {
-  display: flex;
-  gap: 12px;
-  padding: 7px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  align-items: flex-start;
-  transition: background 0.12s;
-}
-
-.tl-item:last-child { border-bottom: none; }
+.timeline-wrap { background: var(--panel); border: 1px solid var(--border); }
+.tl-item { display: flex; gap: 12px; padding: 7px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: flex-start; transition: background 0.12s; }
+.tl-time { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; font-weight: 700; color: var(--gold); min-width: 54px; padding-top: 1px; }
+.tl-task { font-size: 0.82rem; color: var(--text); line-height: 1.4; flex: 1; }
+.tl-del { background: none; border: none; color: transparent; cursor: pointer; font-size: 10px; padding: 2px 4px; transition: color 0.15s; }
+.tl-item:hover .tl-del { color: var(--muted); }
 .tl-item:hover { background: rgba(200,168,75,0.04); }
 
-.tl-time {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--gold);
-  min-width: 54px;
-  padding-top: 1px;
-}
-
-.tl-task { font-size: 0.82rem; color: var(--text); line-height: 1.4; flex: 1; }
-
-.tl-del {
-  background: none;
-  border: none;
-  color: transparent;
-  cursor: pointer;
-  font-size: 10px;
-  padding: 2px 4px;
-  transition: color 0.15s;
-}
-
-.tl-item:hover .tl-del { color: var(--muted); }
-.tl-del:hover { color: var(--danger) !important; }
-
-.tl-form {
-  display: flex;
-  gap: 8px;
-  padding: 10px 14px;
-  background: rgba(0,0,0,0.2);
-  border-top: 1px solid var(--border);
-  align-items: center;
-}
-
-.tl-in {
-  background: var(--black);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 6px 8px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.75rem;
-  transition: border-color 0.15s;
-}
-
+.tl-form { display: flex; gap: 8px; padding: 10px 14px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); align-items: center; }
+.tl-in { background: var(--black); border: 1px solid var(--border); color: var(--text); padding: 6px 8px; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; transition: border-color 0.15s; }
 .tl-in:focus { outline: none; border-color: var(--gold); }
 .tl-in-time { width: 90px; }
 .tl-in-task { flex: 1; }
 
-/* ── SCHEDULE VIEW ── */
-.schedule-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-}
+.schedule-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.sched-day { background: var(--panel); border: 1px solid var(--border); border-top: 3px solid var(--olive); min-height: 400px; }
+.sched-day-header { background: var(--olive); padding: 6px 10px; text-align: center; }
+.sched-day-date { font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700; color: var(--white); line-height: 1; }
+.sched-day-name { font-family: 'Share Tech Mono', monospace; font-size: 0.55rem; color: rgba(255,255,255,0.7); margin-top: 2px; letter-spacing: 1px; }
+.sched-events { padding: 6px; display: flex; flex-direction: column; gap: 3px; }
+.sched-event { padding: 4px 6px; font-size: 0.65rem; line-height: 1.3; border-left: 2px solid var(--gold-dim); background: rgba(200,168,75,0.06); color: var(--text); }
+.sched-event .ev-time { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--gold); display: block; margin-bottom: 1px; }
 
-.sched-day {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--olive);
-  min-height: 400px;
-}
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.stat-card { background: var(--panel); border: 1px solid var(--border); border-bottom: 2px solid var(--olive); padding: 12px 14px; text-align: center; }
+.stat-value { font-family: 'Oswald', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.stat-label { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
-.sched-day-header {
-  background: var(--olive);
-  padding: 6px 10px;
-  text-align: center;
-}
+.editing .editable[contenteditable="true"] { background: rgba(200,168,75,0.04); outline: 1px dashed rgba(200,168,75,0.4); padding: 4px; }
 
-.sched-day-date {
-  font-family: 'Oswald', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--white);
-  line-height: 1;
-}
-
-.sched-day-name {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.55rem;
-  color: rgba(255,255,255,0.7);
-  margin-top: 2px;
-  letter-spacing: 1px;
-}
-
-.sched-events {
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.sched-event {
-  padding: 4px 6px;
-  font-size: 0.65rem;
-  line-height: 1.3;
-  border-left: 2px solid var(--gold-dim);
-  background: rgba(200,168,75,0.06);
-  color: var(--text);
-}
-
-.sched-event .ev-time {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--gold);
-  display: block;
-  margin-bottom: 1px;
-}
-
-/* ── STAT ROW ── */
-.stat-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.stat-card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-bottom: 2px solid var(--olive);
-  padding: 12px 14px;
-  text-align: center;
-}
-
-.stat-value {
-  font-family: 'Oswald', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--gold);
-  line-height: 1;
-}
-
-.stat-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.6rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 4px;
-}
-
-/* ── EDITING STYLES ── */
-.editing .editable[contenteditable="true"] {
-  background: rgba(200,168,75,0.04);
-  outline: 1px dashed rgba(200,168,75,0.4);
-  padding: 4px;
-}
-
-/* ── TOAST ── */
-.toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: var(--panel);
-  border: 1px solid var(--gold-dim);
-  border-left: 3px solid var(--gold);
-  color: var(--text);
-  padding: 10px 16px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.72rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 999;
-}
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--panel); border: 1px solid var(--gold-dim); border-left: 3px solid var(--gold); color: var(--text); padding: 10px 16px; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 999; }
 .toast.show { opacity: 1; }
 
-/* ── EMPTY ── */
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 60vh;
-  gap: 12px;
-  color: var(--muted);
-}
-
-.empty-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--gold);
-  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
-  opacity: 0.2;
-}
-
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; gap: 12px; color: var(--muted); }
+.empty-icon { width: 48px; height: 48px; background: var(--gold); clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); opacity: 0.2; }
 .empty p { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; letter-spacing: 2px; }
 
-.add-section-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px;
-  border: 1px dashed var(--border);
-  color: var(--muted);
-  font-family: 'Oswald', sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 1px;
-  cursor: pointer;
-  background: none;
-  width: 100%;
-  text-transform: uppercase;
-  transition: all 0.15s;
-  display: none;
-}
-
+.add-section-btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px dashed var(--border); color: var(--muted); font-family: 'Oswald', sans-serif; font-size: 0.7rem; letter-spacing: 1px; cursor: pointer; background: none; width: 100%; text-transform: uppercase; transition: all 0.15s; display: none; }
 .editing .add-section-btn { display: flex; }
-.add-section-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
 </style>
 </head>
 <body>
@@ -743,6 +287,7 @@ body {
       SYSTEMS NOMINAL
     </div>
     <button class="btn btn-gold" onclick="showAddMission()">+ MISSION</button>
+    <button class="btn btn-gold" onclick="window.print()">&#128424; PRINT PDF</button>
     <button class="btn" id="edit-btn" onclick="toggleEdit()">&#9998; EDIT</button>
   </div>
 </header>
@@ -791,466 +336,166 @@ function updateClock() {
   const dd = String(d.getDate()).padStart(2,'0');
   const hh = String(d.getHours()).padStart(2,'0');
   const mm = String(d.getMinutes()).padStart(2,'0');
-  document.getElementById('clock-val').textContent =
-    `${dd}${hh}${mm}Z${mo[d.getMonth()]}${String(d.getFullYear()).slice(-2)}`;
+  document.getElementById('clock-val').textContent = dd+hh+mm+"Z"+mo[d.getMonth()]+String(d.getFullYear()).slice(-2);
 }
 setInterval(updateClock, 30000); updateClock();
 
-/* ── TOAST ── */
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg; el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2200);
 }
 
-/* ── SECTION BUILDER ── */
 function mkSection(title, body) {
   const d = document.createElement('div');
   d.className = 'detail-card';
-  d.innerHTML = `
-    <div class="detail-card-header">
-      <span class="detail-card-title editable" contenteditable="false">${title}</span>
-      <button style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;transition:color 0.15s;"
-        onmouseenter="this.style.color='var(--danger)'" onmouseleave="this.style.color='var(--muted)'"
-        onclick="this.closest('.detail-card').remove()">✕</button>
-    </div>
-    <div class="detail-card-body editable" contenteditable="false">${body}</div>`;
+  d.innerHTML = `<div class="detail-card-header"><span class="detail-card-title editable" contenteditable="false">${title}</span><button class="btn" style="border:none;padding:2px;font-size:10px;" onclick="this.closest('.detail-card').remove()">✕</button></div><div class="detail-card-body editable" contenteditable="false">${body}</div>`;
   return d;
 }
 
-/* ── CONOP SLIDE ── */
 function buildConopSlide(data) {
   const div = document.createElement('div');
-  div.className = 'slide';
-  div.id = 'slide-' + data.id;
-
+  div.className = 'slide'; div.id = 'slide-' + data.id;
   div.innerHTML = `
-    <!-- STAT ROW -->
-    <div class="stat-row" id="stats-${data.id}">
-      <div class="stat-card"><div class="stat-value">${data.stats.duration}</div><div class="stat-label">Duration (Days)</div></div>
-      <div class="stat-card"><div class="stat-value">${data.stats.squads}</div><div class="stat-label">Squads Competing</div></div>
-      <div class="stat-card"><div class="stat-value">${data.stats.events}</div><div class="stat-label">Graded Events</div></div>
-      <div class="stat-card"><div class="stat-value">${data.stats.loc}</div><div class="stat-label">Location</div></div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-value">${data.stats.duration}</div><div class="stat-label">Duration</div></div>
+      <div class="stat-card"><div class="stat-value">${data.stats.squads}</div><div class="stat-label">Squads</div></div>
+      <div class="stat-card"><div class="stat-value">${data.stats.events}</div><div class="stat-label">Events</div></div>
+      <div class="stat-card"><div class="stat-value">${data.stats.loc}</div><div class="stat-label">Loc</div></div>
     </div>
-
     <div class="conop-grid">
-      <!-- LEFT -->
-      <div class="conop-left" id="left-${data.id}">
-        <!-- MAP -->
+      <div class="conop-left">
         <div class="map-panel">
-          <div class="panel-header">
-            <span class="panel-header-title">Overlay / Graphic — ${data.name}</span>
-            <div style="display:flex;gap:6px;">
-              <button class="btn" style="padding:4px 10px;font-size:0.65rem;" onclick="triggerUpload(this)">&#8679; UPLOAD</button>
-              <button class="btn" style="padding:4px 10px;font-size:0.65rem;" onclick="clearMap(this)">CLEAR</button>
-            </div>
-          </div>
-          <div class="map-body">
-            <div class="map-grid-overlay"></div>
-            <div class="map-placeholder">
-              <span class="icon">&#9974;</span>
-              <p>NO IMAGERY ON FILE</p>
-              <p style="margin-top:4px;font-size:0.6rem;opacity:0.4;">Upload satellite overlay or graphic</p>
-            </div>
-            <input type="file" hidden accept="image/*" onchange="loadImg(event,this)">
-          </div>
+          <div class="panel-header"><span class="panel-header-title">Map Overlay</span><button class="btn" style="padding:4px;" onclick="triggerUpload(this)">Upload</button></div>
+          <div class="map-body"><img class="map-img"><div class="map-placeholder"><span class="icon">&#9974;</span><p>NO IMAGERY</p></div><input type="file" hidden accept="image/*" onchange="loadImg(event,this)"></div>
         </div>
-
-        <!-- MISSION + INTENT -->
         <div class="info-row">
-          <div class="info-block gold-top">
+          <div class="info-block">
             <div class="info-block-label">Mission</div>
-            <div class="info-block-content editable" contenteditable="false">${data.mission}</div>
+            <div class="info-block-content editable">${data.mission}</div>
           </div>
-          <div class="info-block gold-top">
-            <div class="info-block-label">Commander's Intent</div>
-            <div class="info-block-content editable" contenteditable="false">${data.intent}</div>
+          <div class="info-block">
+            <div class="info-block-label">Intent</div>
+            <div class="info-block-content editable">${data.intent}</div>
           </div>
         </div>
-
-        <!-- TASK / STANDARD -->
-        <div class="info-block" style="margin-bottom:0;">
-          <div class="info-block-label">Task / Standard</div>
-          <div class="info-block-content editable" contenteditable="false">${data.task}</div>
-        </div>
-
-        <!-- TIMELINE -->
+        <div class="info-block"><div class="info-block-label">Task / Standard</div><div class="info-block-content editable">${data.task}</div></div>
         <div class="timeline-wrap">
-          <div class="panel-header">
-            <span class="panel-header-title">Operational Timeline</span>
-          </div>
-          <div class="tl-list" id="tl-${data.id}"></div>
-          <div class="tl-form">
-            <input type="time" class="tl-in tl-in-time">
-            <input type="text" class="tl-in tl-in-task" placeholder="Event / task description">
-            <button class="btn btn-gold" style="padding:6px 12px;font-size:0.68rem;" onclick="addTl(this)">+ ADD</button>
-          </div>
+          <div class="panel-header"><span class="panel-header-title">Timeline</span></div>
+          <div class="tl-list"></div>
+          <div class="tl-form"><input type="time" class="tl-in tl-in-time"><input type="text" class="tl-in tl-in-task"><button class="btn" onclick="addTl(this)">Add</button></div>
         </div>
       </div>
-
-      <!-- RIGHT -->
-      <div class="conop-right" id="right-${data.id}">
-      </div>
+      <div class="conop-right"></div>
     </div>`;
-
-  // Build right column sections
+  
   const right = div.querySelector('.conop-right');
   data.sections.forEach(s => right.appendChild(mkSection(s.title, s.body)));
-  right.appendChild(mkAddSectionBtn(data.id, 'right'));
-
-  // Prefill timeline
-  if (data.timeline) {
-    const tl = div.querySelector('.tl-list');
-    data.timeline.forEach(item => appendTlItem(tl, item.time, item.task));
-  }
-
+  const tl = div.querySelector('.tl-list');
+  data.timeline.forEach(item => appendTlItem(tl, item.time, item.task));
   return div;
-}
-
-function mkAddSectionBtn(id, col) {
-  const btn = document.createElement('button');
-  btn.className = 'add-section-btn';
-  btn.textContent = '+ ADD SECTION';
-  btn.onclick = () => {
-    const title = prompt('Section title:', 'NEW SECTION');
-    if (!title) return;
-    const s = mkSection(title.toUpperCase(), 'Enter data here.');
-    if (editMode) {
-      s.querySelector('.editable').contentEditable = 'true';
-      s.querySelector('.detail-card-title').contentEditable = 'true';
-    }
-    btn.before(s);
-    toast('Section added');
-  };
-  return btn;
 }
 
 function appendTlItem(list, time, task) {
   const item = document.createElement('div');
   item.className = 'tl-item';
-  item.innerHTML = `<span class="tl-time">${time}</span><span class="tl-task">${task}</span>
-    <button class="tl-del" onclick="this.closest('.tl-item').remove()">✕</button>`;
+  item.innerHTML = `<span class="tl-time">${time}</span><span class="tl-task">${task}</span><button class="tl-del" onclick="this.closest('.tl-item').remove()">✕</button>`;
   list.appendChild(item);
 }
 
 function addTl(btn) {
   const wrap = btn.closest('.timeline-wrap');
   const t = wrap.querySelector('.tl-in-time').value;
-  const task = wrap.querySelector('.tl-in-task').value.trim();
-  if (!t || !task) { toast('Enter time and task.'); return; }
+  const task = wrap.querySelector('.tl-in-task').value;
+  if (!t || !task) return;
   appendTlItem(wrap.querySelector('.tl-list'), t, task);
-  wrap.querySelector('.tl-in-time').value = '';
-  wrap.querySelector('.tl-in-task').value = '';
-  wrap.querySelector('.tl-in-task').focus();
 }
 
 function triggerUpload(btn) { btn.closest('.map-panel').querySelector('input[type="file"]').click(); }
-function clearMap(btn) {
-  const mb = btn.closest('.map-panel').querySelector('.map-body');
-  const img = mb.querySelector('img');
-  if (img) img.remove();
-  let ph = mb.querySelector('.map-placeholder');
-  if (!ph) {
-    ph = document.createElement('div');
-    ph.className = 'map-placeholder';
-    ph.innerHTML = `<span class="icon">&#9974;</span><p>NO IMAGERY ON FILE</p>`;
-    mb.appendChild(ph);
-  }
-}
 function loadImg(e, input) {
   const file = e.target.files[0]; if (!file) return;
   const r = new FileReader();
   r.onload = ev => {
     const mb = input.closest('.map-body');
-    let img = mb.querySelector('img');
-    if (!img) { img = document.createElement('img'); mb.appendChild(img); }
-    const ph = mb.querySelector('.map-placeholder');
-    if (ph) ph.remove();
-    img.src = ev.target.result;
+    mb.querySelector('.map-img').src = ev.target.result;
+    mb.querySelector('.map-placeholder').style.display = 'none';
   };
   r.readAsDataURL(file);
 }
 
-/* ── SCHEDULE SLIDE ── */
+/* ── DATA & INIT ── */
 const scheduleData = [
-  { date:'18 APR', day:'SAT', events:[
-    {time:'1230',task:'Arrive & In-Process (Bldg 2280)'},
-    {time:'1300',task:'CSM/SGM Welcome Brief'},
-    {time:'1335',task:'30 MED BDE Safety Brief'},
-    {time:'1500',task:'Equipment Layout'},
-    {time:'1700',task:'Dinner Chow'},
-    {time:'1815',task:'M17 Safety Briefing'},
-    {time:'1900',task:'Squad Time / Lights Out'},
-  ]},
-  { date:'19 APR', day:'SUN', events:[
-    {time:'0415',task:'Wake Up / PRT'},
-    {time:'0445',task:'Conduct AFT (Camp Aachen)'},
-    {time:'0800',task:'Rugged Terrain Course'},
-    {time:'1030',task:'M4/M249 Range (RG 102)'},
-    {time:'1930',task:'Briefing'},
-  ]},
-  { date:'20 APR', day:'MON', events:[
-    {time:'0100',task:'Wake Up'},
-    {time:'0200',task:'Night Land Navigation'},
-    {time:'0730',task:'Day Land Navigation'},
-    {time:'1245',task:'Skill LV 1 Two AWT (PA 153)'},
-    {time:'1930',task:'Lights Out'},
-  ]},
-  { date:'21 APR', day:'TUE', events:[
-    {time:'0300',task:'Wake Up'},
-    {time:'0400',task:'Conduct EPFA (Camp Aachen)'},
-    {time:'0800',task:'ACPQ & IWQ / ARF (RG 122)'},
-    {time:'1330',task:'Grenade Assault Course (RG 129)'},
-    {time:'2000',task:'Briefing'},
-  ]},
-  { date:'22 APR', day:'WED', events:[
-    {time:'0630',task:'Wake Up / Breakfast'},
-    {time:'0800',task:'Obstacle Course'},
-    {time:'1300',task:'Skill LV 2 & Battle Drills / Mystery Event'},
-    {time:'1945',task:'Briefing / Lights Out'},
-  ]},
-  { date:'23 APR', day:'THU', events:[
-    {time:'0400',task:'Wake Up'},
-    {time:'0500',task:'12 Mile Foot March (Camp Aachen)'},
-    {time:'1100',task:'Presentation Boards'},
-    {time:'1300',task:'Presentation Boards (cont.)'},
-    {time:'1915',task:'AAR'},
-  ]},
-  { date:'24 APR', day:'FRI', events:[
-    {time:'0600',task:'Wake Up / Breakfast'},
-    {time:'0900',task:'Movement to Awards Site'},
-    {time:'1000',task:'Awards Ceremony (Parade Field)'},
-    {time:'1200',task:'Out-Processing / Departure'},
-    {time:'1300',task:'SP Back to Home Station'},
-  ]},
+  { date:'18 APR', day:'SAT', events:[{time:'1230',task:'Arrive Bldg 2280'},{time:'1300',task:'CSM Welcome Brief'},{time:'1500',task:'Equipment Layout'}]},
+  { date:'19 APR', day:'SUN', events:[{time:'0445',task:'Conduct AFT'},{time:'0800',task:'Rugged Terrain'}]},
+  { date:'20 APR', day:'MON', events:[{time:'0200',task:'Night Land Nav'},{time:'0730',task:'Day Land Nav'}]},
+  { date:'21 APR', day:'TUE', events:[{time:'0400',task:'Conduct EPFA'},{time:'0800',task:'ACPQ/IWQ'}]},
+  { date:'22 APR', day:'WED', events:[{time:'0800',task:'Obstacle Course'},{time:'1300',task:'Battle Drills'}]},
+  { date:'23 APR', day:'THU', events:[{time:'0500',task:'12 Mile Foot March'},{time:'1100',task:'Boards'}]},
+  { date:'24 APR', day:'FRI', events:[{time:'1000',task:'Awards Ceremony'},{time:'1300',task:'Departure'}]},
 ];
 
 function buildScheduleSlide() {
-  const div = document.createElement('div');
-  div.className = 'slide';
-  div.id = 'slide-schedule';
-
-  const header = document.createElement('div');
-  header.style.cssText = 'margin-bottom:14px;';
-  header.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div>
-        <div style="font-family:Oswald,sans-serif;font-size:1.1rem;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:2px;">Exercise Schedule</div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--gold);margin-top:2px;">21ST STB BEST SQUAD COMPETITION &nbsp;|&nbsp; 18–24 APR 2026 &nbsp;|&nbsp; GRAFENWOEHR, GE</div>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <div style="background:rgba(200,168,75,0.1);border:1px solid var(--gold-dim);padding:6px 12px;text-align:center;">
-          <div style="font-family:Oswald,sans-serif;font-size:1.2rem;color:var(--gold);">7</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:var(--muted);">DAYS</div>
-        </div>
-        <div style="background:rgba(200,168,75,0.1);border:1px solid var(--gold-dim);padding:6px 12px;text-align:center;">
-          <div style="font-family:Oswald,sans-serif;font-size:1.2rem;color:var(--gold);">6</div>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:var(--muted);">SQUADS</div>
-        </div>
-      </div>
-    </div>`;
-  div.appendChild(header);
-
-  const grid = document.createElement('div');
-  grid.className = 'schedule-grid';
+  const div = document.createElement('div'); div.className = 'slide'; div.id = 'slide-schedule';
+  const grid = document.createElement('div'); grid.className = 'schedule-grid';
   scheduleData.forEach(day => {
-    const col = document.createElement('div');
-    col.className = 'sched-day';
-    col.innerHTML = `
-      <div class="sched-day-header">
-        <div class="sched-day-date">${day.date}</div>
-        <div class="sched-day-name">${day.day}</div>
-      </div>
-      <div class="sched-events">
-        ${day.events.map(e => `
-          <div class="sched-event">
-            <span class="ev-time">${e.time}</span>${e.task}
-          </div>`).join('')}
-      </div>`;
+    const col = document.createElement('div'); col.className = 'sched-day';
+    col.innerHTML = `<div class="sched-day-header"><div class="sched-day-date">${day.date}</div></div><div class="sched-events">${day.events.map(e => `<div class="sched-event"><span class="ev-time">${e.time}</span>${e.task}</div>`).join('')}</div>`;
     grid.appendChild(col);
   });
-  div.appendChild(grid);
-  return div;
+  div.appendChild(grid); return div;
 }
 
-/* ── MISSION DATA ── */
-const missionData = {
-  EPFA: {
-    name: 'EPFA',
-    mission: '21st STB conducts Expert Physical Fitness Assessment for FY26 BDE Best Squad Competition.',
-    intent: 'Soldiers, NCOs, and Officers conduct EPFA as a graded event on 21 April 2026.\n\nEnd State: All candidates complete EPFA for FY26 Best Squad Competition.',
-    task: 'Competitors execute EPFA in OCPs and boots (slick). Continuous event — 1-mile run, 30 dead-stop push-ups, 100m sprint, 16x sandbag lifts, 50m farmers carry (2x 40lb water cans), 50m high crawl/3-5 sec rush, finishing 1-mile run. Must complete within 30 minutes.\n\nConditions: Per DA PAM 350-6.',
-    stats: { duration: 7, squads: 6, events: 5, loc: 'GRAFEN' },
-    timeline: [
-      {time:'04:30', task:'Setup — Cones, Sandbags, Equipment Layout'},
-      {time:'05:30', task:'NCOIC Accountability & Brief'},
-      {time:'06:00', task:'EPFA Commences'},
-      {time:'08:00', task:'EPFA Complete / Tear Down'},
-      {time:'08:30', task:'AAR'},
-    ],
-    sections: [
-      { title: 'Concept of Operations', body: '– Setup\n– NCOIC accountability brief\n– EPFA Instructions / PD\n– EPFA begins at start of 1-mile run\n– AAR Following EPFA' },
-      { title: 'Troops to Task', body: 'NCOIC: (TBD)\nMedic: (TBD)\nGraders: Cadre\nSetup/Teardown/Sandbag Detail: Best Squad Detail' },
-      { title: 'Location & Uniform', body: 'Location: Camp Aachen Field\n\nUniform: OCP Top & Bottom, Belt, Coyote Tan T-shirt, Boots, Water Source' },
-      { title: 'Equipment', body: 'Traffic Cones\nx8 Water Cans\nx96 Sandbags\nx1 LMTV (trailer)\nx8 Stopwatches\nx2 Water Jugs\nx4 Measuring Tape' },
-    ]
+const initialMissions = {
+  EPFA: { id: 'EPFA', name: 'EPFA', stats: {duration:7, squads:6, events:5, loc:'GRAFEN'}, 
+    mission: 'Conduct Expert Physical Fitness Assessment[cite: 114].',
+    intent: 'Graded event for Best Squad Competition on 21 April 2026[cite: 115].',
+    task: 'Consecutive 1-mile run, 30 pushups, 100m sprint, 16x sandbag lifts, 50m farmers carry, 50m movement drill, 1-mile run[cite: 137].',
+    timeline: [{time:'0430',task:'Setup'},{time:'0600',task:'EPFA'},{time:'0800',task:'Teardown'}],
+    sections: [{title:'Equipment', body:'x8 Water Cans, x96 Sandbags, x1 LMTV [cite: 158-160]'}]
   },
-  AFT: {
-    name: 'AFT',
-    mission: '21st STB conducts Army Fitness Test for FY26 BDE Best Squad Competition.',
-    intent: 'Soldiers, NCOs, and Officers conduct AFT as a graded event on 19 April 2026.\n\nEnd State: All candidates complete AFT for FY26 Best Squad Competition.',
-    task: 'Conduct Army Fitness Test for Best Squad Competition.\n\nCandidates complete all 5 AFT events: 3RM Deadlift, Hand Release Push-Ups, Sprint Drag Carry, Plank, and 2-Mile Run. Six lanes — one per squad.\n\nConditions: Per FM 7-22.',
-    stats: { duration: 7, squads: 6, events: 5, loc: 'GRAFEN' },
-    timeline: [
-      {time:'04:45', task:'Setup — Lanes, Equipment, Safety Cones'},
-      {time:'05:45', task:'NCOIC Accountability / Brief / Prep Drills'},
-      {time:'06:00', task:'AFT Commences'},
-      {time:'08:00', task:'AFT Complete / Tear Down'},
-      {time:'08:30', task:'AAR'},
-    ],
-    sections: [
-      { title: 'Concept of Operations', body: '– Setup\n– NCOIC accountability brief\n– AFT Instructions & Prep Drills\n– AFT begins at deadlift\n– AAR Following AFT' },
-      { title: 'Troops to Task', body: 'NCOIC: (TBD)\nMedic: (TBD)\nGraders: Cadre\nSetup/Teardown/Grading: Best Squad Detail' },
-      { title: 'Location & Uniform', body: 'Location: Camp Aachen Field\n\nUniform: Summer PTs with water source' },
-      { title: 'Equipment (6 Lanes)', body: '12x 45-lb Kettle Bells\n6x Canvas Sleds\n6x 60-lb Hex Bars + weights\n10x Safety Cones\n40x Score Sheets\n5x 5-gal Water Cans' },
-    ]
+  AFT: { id: 'AFT', name: 'AFT', stats: {duration:7, squads:6, events:5, loc:'GRAFEN'},
+    mission: 'Conduct Army Fitness Test[cite: 175].',
+    intent: 'Graded event for Best Squad Competition on 19 April 2026[cite: 176].',
+    task: '3RM Deadlift, Hand Release Pushups, Sprint Drag Carry, Plank, 2 Mile Run[cite: 197].',
+    timeline: [{time:'0445',task:'Setup'},{time:'0600',task:'AFT'},{time:'0800',task:'Teardown'}],
+    sections: [{title:'Equipment', body:'12x Kettle Bells, 6x Sleds, 6x Hex Bars [cite: 211-213]'}]
   }
 };
 
-/* ── MISSION MANAGEMENT ── */
 function addMission(data) {
-  count++;
-  const id = data ? data.name : 'M' + count;
-  const name = data ? data.name : ('MISSION ' + count);
-  missions[id] = data || {
-    id, name,
-    mission: 'Mission statement — enter data.',
-    intent: 'Purpose:\nMethod:\nEndstate:',
-    task: 'Enter task and standard.',
-    stats: { duration: '--', squads: '--', events: '--', loc: '--' },
-    timeline: [],
-    sections: [
-      { title: 'Concept of Operations', body: 'Phase I: Preparation\nPhase II: Execution\nPhase III: Recovery' },
-      { title: 'Key Personnel', body: 'OIC:\nNCOIC:\nSafetyO:\nLog NCO:' },
-    ]
-  };
-  missions[id].id = id;
-
-  const item = document.createElement('div');
-  item.className = 'mission-item';
-  item.dataset.id = id;
-  item.innerHTML = `<div class="mission-item-name">${name}</div><div class="mission-item-meta">FY26 BSC</div>`;
-  item.onclick = () => switchMission(id);
+  const item = document.createElement('div'); item.className = 'mission-item';
+  item.innerHTML = `<div class="mission-item-name">${data.name}</div>`;
+  item.onclick = () => switchMission(data.id);
   document.getElementById('mission-list').appendChild(item);
-
-  const slide = buildConopSlide(missions[id]);
-  document.getElementById('slides').appendChild(slide);
-
-  switchMission(id);
-  toast('Mission "' + name + '" loaded');
+  document.getElementById('slides').appendChild(buildConopSlide(data));
 }
 
 function switchMission(id) {
   activeId = id;
   document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.mission-item').forEach(i => i.classList.remove('active'));
-
-  const target = document.getElementById('empty-state');
-  if (target) target.style.display = 'none';
-
-  const slideId = activeView === 'schedule' ? 'slide-schedule' : 'slide-' + id;
-  const slide = document.getElementById(slideId);
-  if (slide) slide.classList.add('active');
-
-  const item = document.querySelector(`.mission-item[data-id="${id}"]`);
-  if (item) item.classList.add('active');
-
-  document.getElementById('current-op-name').textContent =
-    'OPERATION BEST SQUAD — ' + id;
-
-  if (editMode) applyEditMode(true);
+  document.getElementById('slide-' + id).classList.add('active');
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('current-op-name').textContent = 'OP BEST SQUAD: ' + id;
 }
 
 function switchView(btn) {
   activeView = btn.dataset.view;
   document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-
   if (activeView === 'schedule') {
-    if (!document.getElementById('slide-schedule')) {
-      document.getElementById('slides').appendChild(buildScheduleSlide());
-    }
+    if (!document.getElementById('slide-schedule')) document.getElementById('slides').appendChild(buildScheduleSlide());
     document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
     document.getElementById('slide-schedule').classList.add('active');
-  } else {
-    if (activeId) switchMission(activeId);
-  }
-}
-
-function showAddMission() {
-  const name = prompt('Mission / operation name:', 'NEW OP');
-  if (!name) return;
-  addMission({ name: name.toUpperCase(), id: name.toUpperCase(),
-    mission: 'Mission statement — enter data.',
-    intent: 'Purpose:\nMethod:\nEndstate:',
-    task: 'Enter task and standard.',
-    stats: { duration: '--', squads: '--', events: '--', loc: '--' },
-    timeline: [], sections: [
-      { title: 'Concept of Operations', body: 'Enter data.' },
-      { title: 'Key Personnel', body: 'OIC:\nNCOIC:' },
-    ]});
-}
-
-function addSectionDialog() {
-  if (!activeId) return;
-  const title = prompt('Section title:', 'NEW SECTION');
-  if (!title) return;
-  const col = prompt('Column? (left / right)', 'right');
-  const colId = (col === 'left' ? 'left-' : 'right-') + activeId;
-  const container = document.getElementById(colId);
-  if (!container) return;
-  const s = mkSection(title.toUpperCase(), 'Enter data here.');
-  if (editMode) {
-    s.querySelector('.editable').contentEditable = 'true';
-    s.querySelector('.detail-card-title').contentEditable = 'true';
-  }
-  const addBtn = container.querySelector('.add-section-btn');
-  if (addBtn) addBtn.before(s); else container.appendChild(s);
-  toast('Section added');
-}
-
-function applyEditMode(on) {
-  const slide = document.querySelector('.slide.active');
-  if (!slide) return;
-  slide.querySelectorAll('.editable').forEach(e => e.contentEditable = on);
-  slide.querySelectorAll('.detail-card-title').forEach(e => e.contentEditable = on);
+  } else if (activeId) switchMission(activeId);
 }
 
 function toggleEdit() {
-  editMode = !editMode;
-  document.body.classList.toggle('editing', editMode);
-  applyEditMode(editMode);
-
-  const btn = document.getElementById('edit-btn');
-  const addBtn = document.getElementById('add-sec-btn');
-  if (editMode) {
-    btn.textContent = '🔒 LOCK';
-    btn.classList.add('btn-active');
-    addBtn.style.display = 'flex';
-    toast('Edit mode active');
-  } else {
-    btn.innerHTML = '&#9998; EDIT';
-    btn.classList.remove('btn-active');
-    addBtn.style.display = 'none';
-    toast('Brief locked');
-  }
+  editMode = !editMode; document.body.classList.toggle('editing', editMode);
+  document.querySelectorAll('.editable').forEach(e => e.contentEditable = editMode);
+  document.getElementById('edit-btn').textContent = editMode ? 'LOCK' : 'EDIT';
 }
 
-/* ── INIT ── */
-window.onload = () => {
-  addMission(missionData.EPFA);
-  addMission(missionData.AFT);
-};
+window.onload = () => { addMission(initialMissions.EPFA); addMission(initialMissions.AFT); };
 </script>
 </body>
 </html>
